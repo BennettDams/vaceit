@@ -8,8 +8,9 @@ ul {
 }
 
 li {
-  display: inline-block;
   margin: 0 10px;
+  background-color: #444111;
+  width: 50%;
 }
 
 a {
@@ -18,7 +19,7 @@ a {
 
 .alert {
   background-color: darkgrey;
-  width: 100%;
+  width: 50%;
   height: 50px;
 }
 
@@ -30,4 +31,24 @@ input {
   width: 50%;
   background-color: #333;
   color: #fff;
+}
+
+.alert-in-enter-active {
+  animation: bounce-in .5s;
+}
+
+.alert-in-leave-active {
+  animation: bounce-in .5s reverse;
+}
+
+@keyframes bounce-in {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.5);
+  }
+  100% {
+    transform: scale(1);
+  }
 }

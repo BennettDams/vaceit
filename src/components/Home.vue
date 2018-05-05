@@ -3,19 +3,24 @@
   <div class="holder">
 
     <!-- set class to "alert" if "showAlert" is false -->
-    <div v-bind:class="alertObject"></div>
+    <!-- <div v-bind:class="alertObject"></div> -->
 
     <p>
       Theses are the skills:
     </p>
 
     <ul>
-      <li v-for="(data, index) in skills" :key="index">{{ data.skill }}</li>
+      <transition-group name="list" enter-active-class="animated bounceInUp" leave-active-class="animated bounceOutDown">
+        <li v-for="(data, index) in skills" :key="index">{{ data.skill }}</li>
+      </transition-group>
     </ul>
 
     <form @submit.prevent="addSkill">
       <input type="text" placeholder="Enter a skill" v-model="skill" v-validate="'min:5'" name="skill" />
-      <p class="alert" v-if="errors.has('skill')"> {{ errors.first('skill') }} </p>
+
+      <transition name="alert-in" enter-active-class="animated flipInX" leave-active-class="animated flipOutX">
+        <p class="alert" v-if="errors.has('skill')"> {{ errors.first('skill') }} </p>
+      </transition>
     </form>
 
   </div>
