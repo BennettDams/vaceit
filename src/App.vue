@@ -1,6 +1,12 @@
 <template>
 <div id="app">
-  <Home msg="Welcome to Your Vue.js App" />
+  <!-- <Home msg="Welcome to Your Vue.js App" /> -->
+  <nav>
+    <router-link to="/">HOME</router-link>
+    <router-link to="/about">ABOUT</router-link>
+  </nav>
+
+  <router-view />
 </div>
 </template>
 
