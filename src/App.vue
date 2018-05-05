@@ -5,6 +5,7 @@
   <!-- <Home msg="Welcome to Your Vue.js App" /> -->
   <nav>
     <router-link to="/">HOME</router-link>
+    <router-link to="/bans">BANS</router-link>
     <router-link to="/about">ABOUT</router-link>
   </nav>
 
@@ -21,6 +22,15 @@ export default {
     Home
   },
   methods: {
+    myFunction() {
+      setInterval(this.alertFunc, 3000);
+    },
+    alertFunc() {
+      // alert("Hello!");
+    }
+  },
+  created() {
+    this.myFunction();
   }
 }
 </script>
