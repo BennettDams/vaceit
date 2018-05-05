@@ -1,5 +1,7 @@
 <template>
 <div id="app">
+  <h3 class="text-center">VACEIT</h3>
+
   <!-- <Home msg="Welcome to Your Vue.js App" /> -->
   <nav>
     <router-link to="/">HOME</router-link>
@@ -17,6 +19,8 @@ export default {
   name: 'app',
   components: {
     Home
+  },
+  methods: {
   }
 }
 </script>

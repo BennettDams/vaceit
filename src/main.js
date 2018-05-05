@@ -1,9 +1,18 @@
 import Vue from 'vue'
 import App from './App.vue'
-import VeeValidate from 'vee-validate';
 import router from './router'
 
-Vue.use(VeeValidate);
+import jQuery from 'jquery'
+global.jQuery = jQuery
+
+import VeeValidate from 'vee-validate'
+import axios from 'axios'
+import VueAxios from 'vue-axios'
+
+
+Vue.use(VeeValidate)
+Vue.use(VueAxios, axios)
+
 Vue.config.productionTip = false
 
 new Vue({
