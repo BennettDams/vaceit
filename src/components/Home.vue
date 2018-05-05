@@ -1,9 +1,6 @@
 <template>
 <div class="home">
   <div class="holder">
-    <ul>
-      <li v-for="(data, index) in skills" :key="index">{{ data.skill }}</li>
-    </ul>
 
     <!-- set class to "alert" if "showAlert" is false -->
     <div v-bind:class="alertObject"></div>
@@ -11,6 +8,15 @@
     <p>
       Theses are the skills:
     </p>
+
+    <ul>
+      <li v-for="(data, index) in skills" :key="index">{{ data.skill }}</li>
+    </ul>
+
+    <form @submit.prevent="addSkill">
+      <input type="text" placeholder="Enter a skill" v-model="skill" v-validate="'min:5'" name="skill" />
+      <p class="alert" v-if="errors.has('skill')"> {{ errors.first('skill') }} </p>
+    </form>
 
   </div>
 </div>
@@ -24,6 +30,7 @@ export default {
   },
   data() {
     return {
+      skill: "",
       skills: [{
           "skill": "Java"
         },
@@ -34,6 +41,20 @@ export default {
       alertObject: {
         alert: true
       },
+    }
+  },
+  methods: {
+    addSkill() {
+      this.$validator.validateAll().then((result) => {
+        if (result) {
+          this.skills.push({
+            skill: this.skill
+          })
+          this.skill = "";
+        } else {
+          console.log("input not valid")
+        }
+      })
     }
   }
 }
