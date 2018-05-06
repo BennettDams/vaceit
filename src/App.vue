@@ -1,13 +1,18 @@
 <template>
 <div id="app">
-  <h3 class="text-center">VACEIT</h3>
 
   <!-- <Home msg="Welcome to Your Vue.js App" /> -->
   <nav>
-    <router-link to="/">HOME</router-link>
-    <router-link to="/bans">BANS</router-link>
-    <router-link to="/about">ABOUT</router-link>
+
   </nav>
+
+  <nav class="navbar is-primary" role="navigation" aria-label="main navigation">
+  <div class="navbar-menu">
+    <router-link to="/" class="navbar-item">HOME</router-link>
+    <router-link to="/bans" class="navbar-item">BANS</router-link>
+    <router-link to="/about" class="navbar-item">ABOUT</router-link>
+  </div>
+</nav>
 
   <router-view />
 </div>

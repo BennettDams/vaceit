@@ -1,54 +1,6 @@
-h3 {
-  margin: 40px 0 0;
-}
-
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-li {
-  margin: 0 10px;
-  background-color: #444111;
-  width: 50%;
-}
-
-a {
-  color: #42b983;
-}
-
-.alert {
-  background-color: darkgrey;
-  width: 50%;
-  height: 50px;
-}
-
-.another-class {
-  border: 3px solid black;
-}
-
-input {
-  width: 50%;
-  background-color: #333;
+.input {
+  background-color: transparent;
+  background-image: none;
+  height: 60px;
   color: #fff;
-}
-
-.alert-in-enter-active {
-  animation: bounce-in .5s;
-}
-
-.alert-in-leave-active {
-  animation: bounce-in .5s reverse;
-}
-
-@keyframes bounce-in {
-  0% {
-    transform: scale(0);
-  }
-  50% {
-    transform: scale(1.5);
-  }
-  100% {
-    transform: scale(1);
-  }
 }
