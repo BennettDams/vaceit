@@ -20,7 +20,8 @@ export default new Router({
     },
     {
       // ":name" is the param
-      path: '/about/:name',
+      // path: '/about/:name',
+      path: '/about',
       name: 'about',
       component: About
     }
