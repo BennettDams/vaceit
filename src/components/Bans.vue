@@ -1,29 +1,31 @@
 <template>
 <div class="bans">
 
-  <section class="hero">
-    <div class="hero-body">
-      <div class="container">
+  <div class="container">
 
-        <div class="columns is-centered">
-          <div class="column has-text-centered">
-            <h1 class="title has-text-white is-size-1 has-text-weight-bold">BANS</h1>
+    <div class="section">
+
+      <div class="row">
+        <div class="s12">
+          <div class="valign-wrapper">
+            <p>
+              <i id="header-bans-symbol" class="material-icons">block</i>
+              <span id="header-bans">BANS</span>
+            </p>
           </div>
         </div>
+      </div>
 
-        <div class="columns is-centered">
-          <div class="column has-text-centered">
-            <h2 class="subtitle has-text-white is-size-2">List of banned players from FACEIT.com</h2>
-          </div>
+      <div class="row">
+        <div class="s12 center-align">
+          <h3>List of banned players at FACEIT.com</h3>
         </div>
-
       </div>
     </div>
-  </section>
 
-  <section>
-    <div class="columns is-centered">
-      <div class="column is-8">
+
+    <div class="section center row">
+      <div class="s12">
 
         <table class="table is-fullwidth has-background-white-ter is-hoverable has-text-centered">
           <thead>
@@ -46,7 +48,7 @@
 
       </div>
     </div>
-  </section>
+  </div>
 
 </div>
 </template>
@@ -83,3 +85,6 @@ export default {
   }
 }
 </script>
+
+<style src="./Bans.css" scoped>
+</style>
