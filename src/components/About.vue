@@ -7,8 +7,8 @@
 
       <div class="row">
         <div class="col s12">
-          <div class="col s12 center-align"><span id="header-about">ABOUT</span></div>
-          <div class="col s12 center-align"><i id="header-about-symbol" class="material-icons">group</i></div>
+          <div class="col s12 center-align"><span class="vaceit-title">ABOUT</span></div>
+          <div class="col s12 center-align"><i class="material-icons vaceit-title-symbol">group</i></div>
         </div>
       </div>
       <div class="row">
@@ -55,5 +55,5 @@ export default {
 }
 </script>
 
-<style src="./About.css" scoped>
+<style src="./css/About.css" scoped>
 </style>

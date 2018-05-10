@@ -6,8 +6,8 @@
     <div class="section">
       <div class="row">
         <div class="col s12">
-          <div class="col s12 center-align"><span id="header-bans">BANS</span></div>
-          <div class="col s12 center-align"><i id="header-bans-symbol" class="material-icons">highlight_off</i></div>
+          <div class="col s12 center-align"><span class="vaceit-title">BANS</span></div>
+          <div class="col s12 center-align"><i class="material-icons vaceit-title-symbol">highlight_off</i></div>
         </div>
       </div>
 
@@ -85,5 +85,5 @@ export default {
 }
 </script>
 
-<style src="./Bans.css" scoped>
+<style src="./css/Bans.css" scoped>
 </style>

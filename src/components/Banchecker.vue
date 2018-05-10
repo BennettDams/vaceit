@@ -6,8 +6,8 @@
     <div class="section">
       <div class="row">
         <div class="col s12">
-          <div class="col s12 center-align"><span id="header-banchecker">BAN CHECKER</span></div>
-          <div class="col s12 center-align"><i id="header-banchecker-symbol" class="material-icons">location_searching</i></div>
+          <div class="col s12 center-align"><span class="vaceit-title">BAN CHECKER</span></div>
+          <div class="col s12 center-align"><i class="material-icons vaceit-title-symbol">location_searching</i></div>
         </div>
       </div>
 
@@ -74,5 +74,5 @@ export default {
 }
 </script>
 
-<style src="./Banchecker.css" scoped>
+<style src="./css/Banchecker.css" scoped>
 </style>

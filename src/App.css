@@ -18,3 +18,13 @@ body, html {
 #app {
   /* height: 100%; */
 }
+
+.vaceit-title {
+  color: rgba(255, 255, 255, 1);
+  font-size: 7em;
+}
+
+.vaceit-title-symbol {
+  color: rgba(255, 99, 10, 1);
+  font-size: 5em;
+}

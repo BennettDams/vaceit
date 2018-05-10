@@ -97,5 +97,5 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style src="./Home.css" scoped>
+<style src="./css/Home.css" scoped>
 </style>

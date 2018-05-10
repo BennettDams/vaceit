@@ -27,5 +27,5 @@
   }
   </script>
 
-  <style src="./Navbar.css">
+  <style src="./css/Navbar.css">
   </style>
