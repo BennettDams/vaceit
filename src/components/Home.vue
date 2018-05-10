@@ -4,10 +4,10 @@
   <div class="container">
 
     <div class="section center row">
-      <div class="s12">
+      <div class="col s12">
         <p>
           <span id="header-vac">VAC</span>
-          <span id="header-it">IT</span>
+          <span id="header-it">EIT</span>
         </p>
         <h3>Check out former enemy's bans</h3>
       </div>
@@ -23,28 +23,13 @@
               <p class="alert" v-if="errors.has('skill')"> {{ errors.first('skill') }} </p>
             </transition>
 
-            <input id="search" class="input center" type="text" placeholder="FACEIT ID / FACEIT PROFILE LINK" v-model="skill" v-validate="'min:5'" name="skill" />
+            <input id="search" class="input center" type="text" placeholder="FACEIT ID / PROFILE LINK" v-model="skill" v-validate="'min:5'" name="skill" />
 
             <label class="label-icon" for="search"><i class="material-icons small">search</i></label>
 
           </div>
         </form>
 
-      </div>
-    </div>
-
-    <div class="section row">
-      <div class="col s4 center">
-        <i class="material-icons">flash_on</i>
-        <p class="light">test</p>
-      </div>
-      <div class="col s4 center">
-        <i class="material-icons">settings</i>
-        <p class="light">test</p>
-      </div>
-      <div class="col s4 center">
-        <i class="material-icons">group</i>
-        <p class="light">test</p>
       </div>
     </div>
 
