@@ -9,6 +9,7 @@
       <ul class="left hide-on-med-and-down">
         <li class="active"><router-link to="/"><i class="material-icons">home</i></router-link></li>
         <li><router-link to="/banchecker">BAN CHECKER</router-link></li>
+        <li><router-link to="/matches">MATCHES</router-link></li>
         <li><router-link to="/bans">BANS</router-link></li>
         <li><router-link to="/about">ABOUT</router-link></li>
       </ul>

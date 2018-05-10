@@ -13,7 +13,7 @@
 
       <div class="row">
         <div class="col s12 center-align">
-          <h3>List of banned players at FACEIT.com</h3>
+          <h3 class="vaceit-subtitle">List of banned players at FACEIT.com</h3>
         </div>
       </div>
     </div>

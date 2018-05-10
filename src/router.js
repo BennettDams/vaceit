@@ -3,6 +3,7 @@ import Router from 'vue-router'
 
 import Home from './components/Home.vue'
 import Banchecker from './components/Banchecker.vue'
+import Matches from './components/Matches.vue'
 import Bans from './components/Bans.vue'
 import About from './components/About.vue'
 
@@ -18,6 +19,11 @@ export default new Router({
       path: '/bans',
       name: 'bans',
       component: Bans
+    },
+    {
+      path: '/matches',
+      name: 'matches',
+      component: Matches
     },
     {
       path: '/banchecker',
