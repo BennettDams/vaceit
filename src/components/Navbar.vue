@@ -8,6 +8,7 @@
       <a class="brand-logo center"><i class="material-icons">gps_fixed</i></a>
       <ul class="left hide-on-med-and-down">
         <li class="active"><router-link to="/"><i class="material-icons">home</i></router-link></li>
+        <li><router-link to="/"><i class="material-icons">search</i></router-link></li>
         <li><router-link to="/banchecker">BAN CHECKER</router-link></li>
         <li><router-link to="/stats">STATS</router-link></li>
         <li><router-link to="/bans">BANS</router-link></li>

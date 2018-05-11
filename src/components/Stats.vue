@@ -25,7 +25,7 @@
 import Matches from './Matches.vue'
 // import axios from 'axios'
 export default {
-  name: 'Stats',
+  name: 'stats',
   components: {
     Matches
   },

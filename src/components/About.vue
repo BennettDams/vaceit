@@ -36,7 +36,7 @@
 
 <script>
 export default {
-  name: 'About',
+  name: 'about',
   props: {},
   data() {
     return {

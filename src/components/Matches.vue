@@ -6,19 +6,11 @@
         <div class="col s12">
 
           <ul class="collapsible expandable">
-            <li class="active">
+            <li v-for="(match, index) in matches" :key="index">
               <div class="collapsible-header transparent"><i class="material-icons">filter_drama</i>First</div>
-              <div class="collapsible-body orange lighten-4 orange-text text-darken-4"><span>Lorem ipsum dolor sit amet.</span></div>
+              <div class="collapsible-body orange lighten-4 orange-text text-darken-4"><span>{{ match.matchId }}</span></div>
             </li>
-            <li>
-              <div class="collapsible-header transparent"><i class="material-icons">place</i>Second</div>
-              <div class="collapsible-body transparent"><span>Lorem ipsum dolor sit amet.</span></div>
-            </li>
-            <li>
-              <div class="collapsible-header transparent"><i class="material-icons">whatshot</i>Third</div>
-              <div class="collapsible-body transparent"><span>Lorem ipsum dolor sit amet.</span></div>
-            </li>
-          </ul>
+         </ul>
 
         </div>
       </div>
@@ -28,12 +20,33 @@
   </template>
 
   <script>
+  import axios from 'axios'
   export default {
     name: 'matches',
+    props: {},
+    data() {
+      return {
+        matches: []
+      }
+    },
     mounted() {
       this.initializeCollapsible();
     },
+    created() {
+      this.fetchMatchesByUser();
+    },
     methods: {
+      fetchMatchesByUser() {
+        axios.get('https://api.faceit.com/stats/v1/stats/time/users/a0d61b0a-3255-4269-b042-aa2c68c0fb3e/games/csgo?page=0&size=30')
+          .then((response) => {
+            this.matches = response.data;
+            console.log(this.matches);
+          })
+          .catch((error) => {
+            console.log(error);
+            this.matches = "error";
+          });
+      },
       initializeCollapsible() {
         var elem = document.querySelector('.collapsible');
         new M.Collapsible(elem, {

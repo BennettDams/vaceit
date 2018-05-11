@@ -31,7 +31,7 @@
 
 <script>
 export default {
-  name: 'Banchecker',
+  name: 'banchecker',
   props: {},
   data() {
     return {

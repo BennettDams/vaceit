@@ -1,7 +1,6 @@
 <template>
 <div class="bans">
 
-
   <div class="section">
     <div class="row">
       <div class="col s12">
@@ -16,7 +15,6 @@
       </div>
     </div>
   </div>
-
 
   <div class="section center-align">
     <div class="row">
@@ -53,7 +51,7 @@
 <script>
 import axios from 'axios'
 export default {
-  name: 'Bans',
+  name: 'bans',
   props: {},
   data() {
     return {
@@ -61,15 +59,15 @@ export default {
     }
   },
   created() {
-    this.getJsonBans();
-    this.updateJsonBans();
+    this.fetchBans();
+    this.updateBans();
   },
   methods: {
-    updateJsonBans() {
+    updateBans() {
       setInterval(this.getJsonBans, 10000);
       console.log("updateJsonBans");
     },
-    getJsonBans() {
+    fetchBans() {
       axios.get('https://api.faceit.com/core/v1/bans?limit=100&offset=0')
         .then((response) => {
           this.bans = response.data.payload;
