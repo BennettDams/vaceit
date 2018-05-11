@@ -1,8 +1,6 @@
 <template>
 <div class="about">
 
-  <div class="container">
-
     <div class="section">
 
       <div class="row">
@@ -32,7 +30,6 @@
         </div>
       </div>
     </div>
-  </div>
 
 </div>
 </template>

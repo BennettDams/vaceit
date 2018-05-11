@@ -1,8 +1,6 @@
 <template>
 <div class="banchecker">
 
-  <div class="container">
-
     <div class="section">
       <div class="row">
         <div class="col s12">
@@ -27,7 +25,6 @@
         </div>
       </div>
     </div>
-  </div>
 
 </div>
 </template>
