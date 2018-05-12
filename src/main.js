@@ -9,7 +9,9 @@ import VeeValidate from 'vee-validate'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
 
-import '../node_modules/materialize-css/dist/js/materialize.min.js'
+import moment from 'moment'
+
+import M from '../node_modules/materialize-css/dist/js/materialize.min.js'
 
 Vue.use(VeeValidate)
 Vue.use(VueAxios, axios)

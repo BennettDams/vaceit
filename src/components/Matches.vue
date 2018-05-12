@@ -7,8 +7,26 @@
 
           <ul class="collapsible expandable">
             <li v-for="(match, index) in matches" :key="index">
-              <div class="collapsible-header transparent"><i class="material-icons">filter_drama</i>First</div>
-              <div class="collapsible-body orange lighten-4 orange-text text-darken-4"><span>{{ match.matchId }}</span></div>
+              <div class="collapsible-header transparent">
+                <div class="col s12">
+                  <i class="material-icons left">check_circle</i>
+                  <span class="chip left">{{ match.score }}</span>
+                  <span class="center">{{ match.map }}</span>
+                  <span class="right">{{ match.date }}</span>
+                </div>
+
+              </div>
+              <div class="col s12 collapsible-body deep-orange lighten-5 orange-text text-darken-4">
+                <div class="col s2">
+                  <h1>{{ match.ownScore }}</h1>
+                </div>
+                <div class="col s8">
+                  <span>{{ match.matchId }}</span>
+                </div>
+                <div class="col s2">
+                  <h1>{{ match.enemyScore }}</h1>
+                </div>
+              </div>
             </li>
          </ul>
 
@@ -21,11 +39,14 @@
 
   <script>
   import axios from 'axios'
+  import moment from 'moment'
+  // import M from '../../node_modules/materialize-css/dist/js/materialize.min.js'
   export default {
     name: 'matches',
     props: {},
     data() {
       return {
+        matchesAll: [],
         matches: []
       }
     },
@@ -39,12 +60,22 @@
       fetchMatchesByUser() {
         axios.get('https://api.faceit.com/stats/v1/stats/time/users/a0d61b0a-3255-4269-b042-aa2c68c0fb3e/games/csgo?page=0&size=30')
           .then((response) => {
-            this.matches = response.data;
-            console.log(this.matches);
+            this.matchesAll = response.data;
+            this.matchesAll.forEach(function(entry) {
+              var match = {};
+              match["matchId"] = entry.matchId;
+              match["score"] = entry.i18;
+              match["ownScore"] = match.score.split("\/")[0].replace(/ /g,"");
+              match["enemyScore"] = match.score.split("\/")[1].replace(/ /g,"");
+              match["map"] = entry.i1;
+              match["date"] = moment(entry.date).format('DD | MMMM | YYYY hh:mm');
+              this.matches.push(match);
+            }.bind(this));
+          console.log(this.matches);
           })
           .catch((error) => {
             console.log(error);
-            this.matches = "error";
+            this.matchesAll = "fetch error";
           });
       },
       initializeCollapsible() {
