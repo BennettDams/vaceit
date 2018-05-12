@@ -46,7 +46,6 @@
     props: {},
     data() {
       return {
-        matchesAll: [],
         matches: []
       }
     },
@@ -54,14 +53,14 @@
       this.initializeCollapsible();
     },
     created() {
-      this.fetchMatchesByUser();
+      this.fetchAllMatchesByUser();
     },
     methods: {
-      fetchMatchesByUser() {
+      fetchAllMatchesByUser() {
         axios.get('https://api.faceit.com/stats/v1/stats/time/users/a0d61b0a-3255-4269-b042-aa2c68c0fb3e/games/csgo?page=0&size=30')
           .then((response) => {
-            this.matchesAll = response.data;
-            this.matchesAll.forEach(function(entry) {
+            var matchesAll = response.data;
+            matchesAll.forEach(function(entry) {
               var match = {};
               match["matchId"] = entry.matchId;
               match["score"] = entry.i18;
@@ -71,11 +70,21 @@
               match["date"] = moment(entry.date).format('DD | MMMM | YYYY hh:mm');
               this.matches.push(match);
             }.bind(this));
-          console.log(this.matches);
           })
           .catch((error) => {
             console.log(error);
-            this.matchesAll = "fetch error";
+          });
+      },
+      fetchMatchDetails(matchId) {
+        axios.get('https://api.faceit.com/stats/v1/stats/time/users/' + matchId + '/games/csgo?page=0&size=30')
+          .then((response) => {
+            var matchDetails = response.data;
+
+            // this.matches.push(match);
+
+          })
+          .catch((error) => {
+            console.log(error);
           });
       },
       initializeCollapsible() {
