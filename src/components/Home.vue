@@ -11,87 +11,37 @@
         <h3>Check out former enemy's bans</h3>
       </div>
     </div>
-
-    <div class="section row">
-      <div class="col s12">
-
-        <form @submit.prevent="addSkill">
-          <div class="input-field">
-
-            <transition name="alert-in" enter-active-class="animated flipInX" leave-active-class="animated flipOutX">
-              <p class="alert" v-if="errors.has('skill')"> {{ errors.first('skill') }} </p>
-            </transition>
-
-            <input id="search" class="input center" type="text" placeholder="FACEIT ID / PROFILE LINK" v-model="skill" v-validate="'min:5'" name="skill" />
-
-            <label class="label-icon" for="search"><i class="material-icons small">search</i></label>
-
-          </div>
-        </form>
-
-      </div>
-    </div>
   </div>
+
+  <SearchUser :selectedOption="selectedOption"></SearchUser>
+
+  {{ user }}
 
 </div>
 </template>
 
 
 <script>
-import axios from 'axios'
+import { eventBus } from '../main.js'
+import SearchUser from './SearchUser.vue'
 export default {
   name: 'home',
-  props: {
-    // msg: String
+  components: {
+    SearchUser
   },
   data() {
     return {
-      skill: "",
-      skills: [{
-          "skill": "Java"
-        },
-        {
-          "skill": "Spring"
-        }
-      ],
-      alertObject: {
-        alert: true
-      },
-      users: []
+      selectedOption: 'test',
+      user: null,
     }
   },
   created() {
-    this.loadUsers();
-    // this.updateJsonBans();
+    // using the event busu
+    eventBus.$on('searchUser', (user) => {
+      this.user = user;
+    });
   },
-  methods: {
-    addSkill() {
-      this.$validator.validateAll().then((result) => {
-        if (result) {
-          this.skills.push({
-            skill: this.skill
-          })
-          this.skill = "";
-        } else {
-          console.log("input not valid")
-        }
-      })
-    },
-    remove(id) {
-      this.skills.splice(id, 1);
-    },
-    loadUsers() {
-      axios.get('')
-        .then((response) => {
-          this.users = response.data.payload;
-          console.log(this.users);
-        })
-        .catch((error) => {
-          console.log(error);
-          this.users = "error";
-        });
-    }
-  }
+  methods: {}
 }
 </script>
 

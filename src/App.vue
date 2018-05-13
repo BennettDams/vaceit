@@ -19,15 +19,8 @@ export default {
     Navbar
   },
   methods: {
-    myFunction() {
-      setInterval(this.alertFunc, 3000);
-    },
-    alertFunc() {
-      // alert("Hello!");
-    }
   },
   created() {
-    this.myFunction();
   }
 }
 </script>

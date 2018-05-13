@@ -21,6 +21,9 @@ Vue.use(M)
 
 Vue.config.productionTip = false
 
+// event bus pattern to share data between all components
+export const eventBus = new Vue();
+
 new Vue({
   router,
   render: h => h(App)
