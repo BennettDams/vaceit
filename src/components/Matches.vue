@@ -21,7 +21,23 @@
                   <h1>{{ match.ownScore }}</h1>
                 </div>
                 <div class="col s8">
-                  <span>{{ match.matchId }}</span>
+                  <div class="col s5">
+                    <ul class="">
+                      <li v-for="(player, index) in match.team1players" :key="index">
+                        <span class="center">{{ player.nickname }}</span>
+                      </li>
+                    </ul>
+                  </div>
+                  <div class="col s2">
+
+                  </div>
+                  <div class="col s5">
+                    <ul class="">
+                      <li v-for="(player, index) in match.team2players" :key="index">
+                        <span class="center">{{ player.nickname }}</span>
+                      </li>
+                    </ul>
+                  </div>
                 </div>
                 <div class="col s2">
                   <h1>{{ match.enemyScore }}</h1>
@@ -40,7 +56,7 @@
   <script>
   import axios from 'axios'
   import moment from 'moment'
-  // import M from '../../node_modules/materialize-css/dist/js/materialize.min.js'
+  import M from 'materialize-css'
   export default {
     name: 'matches',
     props: {},
@@ -61,27 +77,44 @@
           .then((response) => {
             var matchesAll = response.data;
             matchesAll.forEach(function(entry) {
-              var match = {};
-              match["matchId"] = entry.matchId;
-              match["score"] = entry.i18;
-              match["ownScore"] = match.score.split("\/")[0].replace(/ /g,"");
-              match["enemyScore"] = match.score.split("\/")[1].replace(/ /g,"");
-              match["map"] = entry.i1;
-              match["date"] = moment(entry.date).format('DD | MMMM | YYYY hh:mm');
-              this.matches.push(match);
+              this.fetchMatchDetails(entry.matchId);
             }.bind(this));
+            console.log(this.matches);
           })
           .catch((error) => {
             console.log(error);
           });
       },
       fetchMatchDetails(matchId) {
-        axios.get('https://api.faceit.com/stats/v1/stats/time/users/' + matchId + '/games/csgo?page=0&size=30')
+        axios.get('https://api.faceit.com/stats/v1/stats/matches/' + matchId)
           .then((response) => {
             var matchDetails = response.data;
+            matchDetails.forEach(function(entry) {
+              var match = {};
+              match["matchId"] = matchId;
+              match["score"] = entry.i18;
+              match["ownScore"] = match.score.split("/")[0].replace(/ /g,"");
+              match["enemyScore"] = match.score.split("/")[1].replace(/ /g,"");
+              match["map"] = entry.i1;
+              match["date"] = moment(entry.date).format('DD | MMMM | YYYY hh:mm');
 
-            // this.matches.push(match);
+              match["team1"] = entry.teams[0];
+              match["team2"] = entry.teams[1];
+              match["team1players"] = entry.teams[0].players;
+              match["team2players"] = entry.teams[1].players;
 
+              match["team1player1"] = entry.teams[0].players[0];
+              match["team1player2"] = entry.teams[0].players[1];
+              match["team1player3"] = entry.teams[0].players[2];
+              match["team1player4"] = entry.teams[0].players[3];
+              match["team1player5"] = entry.teams[0].players[4];
+              match["team2player1"] = entry.teams[1].players[0];
+              match["team2player2"] = entry.teams[1].players[1];
+              match["team2player3"] = entry.teams[1].players[2];
+              match["team2player4"] = entry.teams[1].players[3];
+              match["team2player5"] = entry.teams[1].players[4];
+              this.matches.push(match);
+            }.bind(this));
           })
           .catch((error) => {
             console.log(error);

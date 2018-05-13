@@ -11,10 +11,13 @@ import VueAxios from 'vue-axios'
 
 import moment from 'moment'
 
-import M from '../node_modules/materialize-css/dist/js/materialize.min.js'
+import M from 'materialize-css'
 
 Vue.use(VeeValidate)
 Vue.use(VueAxios, axios)
+
+Vue.use(moment)
+Vue.use(M)
 
 Vue.config.productionTip = false
 
