@@ -5,6 +5,8 @@
       <div class="row">
         <div class="col s12">
 
+          accountId:   {{ accountId }}
+
           <ul class="collapsible expandable">
             <li v-for="(match, index) in matches" :key="index">
               <div class="collapsible-header transparent">
@@ -59,9 +61,11 @@
   import M from 'materialize-css'
   export default {
     name: 'matches',
-    props: {},
+    components: {
+    },
     data() {
       return {
+        accountId: 'test',
         matches: []
       }
     },
@@ -79,7 +83,6 @@
             matchesAll.forEach(function(entry) {
               this.fetchMatchDetails(entry.matchId);
             }.bind(this));
-            console.log(this.matches);
           })
           .catch((error) => {
             console.log(error);

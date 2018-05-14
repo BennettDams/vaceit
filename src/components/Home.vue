@@ -15,14 +15,11 @@
 
   <SearchUser :selectedOption="selectedOption"></SearchUser>
 
-  {{ user }}
-
 </div>
 </template>
 
 
 <script>
-import { eventBus } from '../main.js'
 import SearchUser from './SearchUser.vue'
 export default {
   name: 'home',
@@ -32,14 +29,7 @@ export default {
   data() {
     return {
       selectedOption: 'test',
-      user: null,
     }
-  },
-  created() {
-    // using the event busu
-    eventBus.$on('searchUser', (user) => {
-      this.user = user;
-    });
   },
   methods: {}
 }

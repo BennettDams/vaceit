@@ -13,6 +13,9 @@ import moment from 'moment'
 
 import M from 'materialize-css'
 
+// event bus pattern to share data between all components
+// export const EventBus = new Vue();
+
 Vue.use(VeeValidate)
 Vue.use(VueAxios, axios)
 
@@ -20,9 +23,6 @@ Vue.use(moment)
 Vue.use(M)
 
 Vue.config.productionTip = false
-
-// event bus pattern to share data between all components
-export const eventBus = new Vue();
 
 new Vue({
   router,

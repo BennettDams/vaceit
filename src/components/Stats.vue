@@ -23,7 +23,6 @@
 
 <script>
 import Matches from './Matches.vue'
-// import axios from 'axios'
 export default {
   name: 'stats',
   components: {
