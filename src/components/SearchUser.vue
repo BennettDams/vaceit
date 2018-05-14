@@ -3,8 +3,8 @@
 
   <div class="section row">
     <div class="col s12">
-
-      <input @keyup.enter="accountSearched()" v-model="accountId" placeholder="edit me">
+      SHEIX: a0d61b0a-3255-4269-b042-aa2c68c0fb3e
+      <input @keyup.enter="searchedAccount()" v-model="accountId" placeholder="edit me">
       <p>Message is: {{ accountId }}</p>
 
     </div>
@@ -15,17 +15,24 @@
 </template>
 
 <script>
+import { store } from '../main.js'
 export default {
   name: 'search-user',
   data() {
     return {
-      accountId: null
+      accountId: store.accountId
+    }
+  },
+  computed: {
+    computedvar: function () {
+      return store.accountId
     }
   },
   created() {},
   methods: {
-    accountSearched() {
-      console.log("account searched: " + this.accountId);
+    searchedAccount() {
+      store.accountId = this.accountId;
+      this.$router.push('/stats')
     }
   }
 }

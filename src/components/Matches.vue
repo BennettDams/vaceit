@@ -56,6 +56,7 @@
   </template>
 
   <script>
+  import { store } from '../main.js'
   import axios from 'axios'
   import moment from 'moment'
   import M from 'materialize-css'
@@ -65,7 +66,7 @@
     },
     data() {
       return {
-        accountId: 'test',
+        accountId: store.accountId,
         matches: []
       }
     },
@@ -77,7 +78,7 @@
     },
     methods: {
       fetchAllMatchesByUser() {
-        axios.get('https://api.faceit.com/stats/v1/stats/time/users/a0d61b0a-3255-4269-b042-aa2c68c0fb3e/games/csgo?page=0&size=30')
+        axios.get('https://api.faceit.com/stats/v1/stats/time/users/' + this.accountId + '/games/csgo?page=0&size=30')
           .then((response) => {
             var matchesAll = response.data;
             matchesAll.forEach(function(entry) {

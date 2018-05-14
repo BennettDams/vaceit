@@ -16,6 +16,8 @@
     </div>
   </div>
 
+
+
   <Matches></Matches>
 
 </div>
@@ -28,11 +30,11 @@ export default {
   components: {
     Matches
   },
-  props: {},
   data() {
     return {
-      test: []
     }
+  },
+  methods: {
   }
 }
 </script>

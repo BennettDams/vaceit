@@ -12,20 +12,19 @@
 
 <script>
 import Navbar from './components/Navbar.vue'
-
 export default {
   name: 'app',
   data() {
     return {
-      userId: null,
+      accountId: null,
     }
   },
   components: {
     Navbar
   },
-  methods: {},
+  methods: {
+  },
   mounted() {},
-  created() {}
 }
 </script>
 
