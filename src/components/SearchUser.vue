@@ -4,7 +4,7 @@
   <div class="section row">
     <div class="col s12">
       SHEIX: a0d61b0a-3255-4269-b042-aa2c68c0fb3e
-      <input @keyup.enter="searchedAccount()" v-model="accountId" placeholder="edit me">
+      <input @keyup.enter="searchedAccount()" v-model="accountId" placeholder="">
       <p>Message is: {{ accountId }}</p>
 
     </div>
