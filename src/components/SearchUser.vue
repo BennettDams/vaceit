@@ -3,9 +3,14 @@
 
   <div class="section row">
     <div class="col s12">
-      SHEIX: a0d61b0a-3255-4269-b042-aa2c68c0fb3e
-      <input @keyup.enter="searchedAccount()" v-model="accountId" placeholder="">
-      <p>Message is: {{ accountId }}</p>
+
+      <form>
+        <div class="input-field">
+          <i class="material-icons prefix">search</i>
+          <input id="search" type="tel" required @keyup.enter="searchedAccount()" v-model="username">
+          <label for="search">FACEIT ID OR ACCOUNT URL</label>
+        </div>
+      </form>
 
     </div>
   </div>
@@ -15,24 +20,43 @@
 </template>
 
 <script>
-import { store } from '../main.js'
+import {
+  store
+} from '../main.js'
+import axios from 'axios'
 export default {
   name: 'search-user',
   data() {
     return {
-      accountId: store.accountId
+      username: ''
     }
   },
   computed: {
-    computedvar: function () {
+    computedvar: function() {
       return store.accountId
     }
   },
   created() {},
   methods: {
     searchedAccount() {
-      store.accountId = this.accountId;
-      this.$router.push('/stats')
+      this.fetchAccountIdByUsername(this.username);
+    },
+    fetchAccountIdByUsername(username) {
+      var faceItUrl = "faceit.com/";
+      var usernameCheck = username.toLowerCase();
+      if (usernameCheck.includes(faceItUrl)) {
+        console.log('full url');
+      }
+      axios.get('https://api.faceit.com/core/v1/nicknames/' + this.username)
+        .then((response) => {
+          console.log('username: ' + username);
+          store.accountId = response.data.payload.guid;
+          console.log('store acc id: ' + store.accountId);
+          this.$router.push('/stats')
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     }
   }
 }

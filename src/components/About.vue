@@ -12,7 +12,7 @@
       <div class="row">
         <div class="col s12">
           <div class="center-align">
-            <h3>MADE JUST FOR FUN BY</h3>
+            <h3>MADE FOR FUN BY</h3>
             <h2 id="bennett">Bennett</h2>
             <!-- <i class="material-icons">location_searching</i> -->
           </div>

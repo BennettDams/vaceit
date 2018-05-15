@@ -5,35 +5,39 @@
       <div class="row">
         <div class="col s12">
 
-          accountId:   {{ accountId }}
+          accountId: {{ accountId }}
 
           <ul class="collapsible expandable">
             <li v-for="(match, index) in matches" :key="index">
-              <div class="collapsible-header transparent">
+
+              <div class="collapsible-header transparent hoverable">
                 <div class="col s12">
                   <i class="material-icons left">check_circle</i>
                   <span class="chip left">{{ match.score }}</span>
-                  <span class="center">{{ match.map }}</span>
                   <span class="right">{{ match.date }}</span>
+                  <div class="btn orange darken-3">{{ match.map }}</div>
                 </div>
-
               </div>
+
               <div class="col s12 collapsible-body deep-orange lighten-5 orange-text text-darken-4">
+
                 <div class="col s2">
                   <h1>{{ match.ownScore }}</h1>
                 </div>
-                <div class="col s8">
-                  <div class="col s5">
+
+                <div class="col s8 matches-collapsible-middle">
+
+                  <div class="col s4">
                     <ul class="">
                       <li v-for="(player, index) in match.team1players" :key="index">
                         <span class="center">{{ player.nickname }}</span>
                       </li>
                     </ul>
                   </div>
-                  <div class="col s2">
-
+                  <div class="col s4">
+                    <!-- <img class="responsive-img" :src="require(`@/assets/img/maps/${match.map}_thumbnail.jpg`)" /> -->
                   </div>
-                  <div class="col s5">
+                  <div class="col s4">
                     <ul class="">
                       <li v-for="(player, index) in match.team2players" :key="index">
                         <span class="center">{{ player.nickname }}</span>
@@ -41,12 +45,14 @@
                     </ul>
                   </div>
                 </div>
+
                 <div class="col s2">
                   <h1>{{ match.enemyScore }}</h1>
                 </div>
+
               </div>
             </li>
-         </ul>
+          </ul>
 
         </div>
       </div>
@@ -67,23 +73,45 @@
     data() {
       return {
         accountId: store.accountId,
-        matches: []
+        matches: [],
+        matchesAxiosSize: 30,
+        matchesAxiosPage: 0
+      }
+    },
+    computed: {
+      computedvar: function () {
+        return store.accountId
       }
     },
     mounted() {
       this.initializeCollapsible();
-    },
-    created() {
-      this.fetchAllMatchesByUser();
+      this.fetchAllMatchesByUser(this.matchesAxiosPage);
     },
     methods: {
-      fetchAllMatchesByUser() {
-        axios.get('https://api.faceit.com/stats/v1/stats/time/users/' + this.accountId + '/games/csgo?page=0&size=30')
+      fetchAllMatchesByUser(page) {
+        console.log("function page: " + page);
+        axios.get('https://api.faceit.com/stats/v1/stats/time/users/' + this.accountId + '/games/csgo', {
+          params: {
+              page: this.matchesAxiosPage,
+              // page: 10,
+              size: this.matchesAxiosSize
+            }
+          })
           .then((response) => {
+
+            console.log("response: " + response);
+            console.log("response data: " + response.data);
+
             var matchesAll = response.data;
             matchesAll.forEach(function(entry) {
               this.fetchMatchDetails(entry.matchId);
             }.bind(this));
+
+            console.log("length: " + response.data.length);
+            if(response.data != 0) {
+              this.matchesAxiosPage += 1;
+              this.fetchAllMatchesByUser(this.matchesAxiosPage);
+            }
           })
           .catch((error) => {
             console.log(error);
