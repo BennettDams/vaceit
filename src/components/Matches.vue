@@ -91,24 +91,18 @@
       fetchAllMatchesByUser(page) {
         console.log("function page: " + page);
         axios.get('https://api.faceit.com/stats/v1/stats/time/users/' + this.accountId + '/games/csgo', {
-          params: {
+            params: {
               page: this.matchesAxiosPage,
-              // page: 10,
               size: this.matchesAxiosSize
             }
           })
           .then((response) => {
-
-            console.log("response: " + response);
-            console.log("response data: " + response.data);
-
             var matchesAll = response.data;
             matchesAll.forEach(function(entry) {
               this.fetchMatchDetails(entry.matchId);
             }.bind(this));
 
-            console.log("length: " + response.data.length);
-            if(response.data != 0) {
+            if(response.data.length != 0) {
               this.matchesAxiosPage += 1;
               this.fetchAllMatchesByUser(this.matchesAxiosPage);
             }

@@ -12,6 +12,7 @@
     <div class="row">
       <div class="col s12 center-align">
         <h3 class="vaceit-subtitle">List of banned players at FACEIT.com</h3>
+        <h4 class="orange-text">BANNED PLAYERS: {{ amountBans }}</h4>
       </div>
     </div>
   </div>
@@ -50,31 +51,69 @@
 
 <script>
 import axios from 'axios'
+import moment from 'moment'
 export default {
   name: 'bans',
   props: {},
   data() {
     return {
-      bans: []
+      scrollPage: 0,
+      bans: [],
+      banAxiosLimit: 100,
+      banAxiosOffset: 0,
+      amountBans: 0
     }
   },
-  created() {
+  mounted() {
     this.fetchBans();
     this.updateBans();
+    this.scroll();
   },
   methods: {
+    scroll() {
+      window.onscroll = () => {
+        let bottomOfWindow = document.documentElement.scrollTop + window.innerHeight === document.documentElement.offsetHeight;
+
+        if (bottomOfWindow) {
+          this.fetchBans();
+        }
+      };
+    },
     updateBans() {
-      setInterval(this.getJsonBans, 10000);
       console.log("updateJsonBans");
+      setInterval(this.getJsonBans, 100000);
     },
     fetchBans() {
-      axios.get('https://api.faceit.com/core/v1/bans?limit=100&offset=0')
+      axios.get('https://api.faceit.com/core/v1/bans', {
+          params: {
+            limit: this.banAxiosLimit,
+            offset: this.banAxiosOffset
+          }
+        })
         .then((response) => {
-          this.bans = response.data.payload;
+          var payload = response.data.payload;
+          var len = payload.length;
+          if (len != 0) {
+            if (this.banAxiosOffset == 0) {
+              this.bans = payload;
+              this.bans.forEach(function(entry) {
+                entry.starts_at = moment(entry.date).format('DD | MMMM | YYYY hh:mm');
+                entry.ends_at = moment(entry.date).format('DD | MMMM | YYYY hh:mm');
+              }.bind(this));
+            } else {
+              payload.forEach(function(entry) {
+                entry.starts_at = moment(entry.date).format('DD | MMMM | YYYY hh:mm');
+                entry.ends_at = moment(entry.date).format('DD | MMMM | YYYY hh:mm');
+                this.bans.push(entry);
+              }.bind(this));
+            }
+            this.banAxiosOffset++;
+            // this.fetchBans();
+          }
+          this.amountBans += len;
         })
         .catch((error) => {
           console.log(error);
-          this.bans = "error";
         });
     }
   }
