@@ -12,17 +12,30 @@
 
               <div class="collapsible-header transparent hoverable">
                 <div class="col s12">
-                  <i class="material-icons left">check_circle</i>
-                  <span class="chip left">{{ match.score }}</span>
-                  <span class="right">{{ match.date }}</span>
-                  <div class="btn orange darken-3">{{ match.map }}</div>
+
+                  <div class="col s4">
+                    <div class="btn orange darken-3 left">{{ match.map }}</div>
+                  </div>
+
+                  <div class="col s4">
+                    WIN
+                  </div>
+
+                  <div class="col s2">
+                    <span class="chip">{{ match.scoreTeam1 }}</span> - <span class="chip">{{ match.scoreTeam2 }}</span>
+                  </div>
+
+                  <div class="col s2">
+                    <span class="right">{{ match.date }}</span>
+                  </div>
+
                 </div>
               </div>
 
               <div class="col s12 collapsible-body deep-orange lighten-5 orange-text text-darken-4">
 
                 <div class="col s2">
-                  <h1>{{ match.ownScore }}</h1>
+                  <h1>{{ match.scoreTeam1 }}</h1>
                 </div>
 
                 <div class="col s8 matches-collapsible-middle">
@@ -47,7 +60,7 @@
                 </div>
 
                 <div class="col s2">
-                  <h1>{{ match.enemyScore }}</h1>
+                  <h1>{{ match.scoreTeam2 }}</h1>
                 </div>
 
               </div>
@@ -119,10 +132,10 @@
               var match = {};
               match["matchId"] = matchId;
               match["score"] = entry.i18;
-              match["ownScore"] = match.score.split("/")[0].replace(/ /g,"");
-              match["enemyScore"] = match.score.split("/")[1].replace(/ /g,"");
+              match["scoreTeam1"] = match.score.split("/")[0].replace(/ /g,"");
+              match["scoreTeam2"] = match.score.split("/")[1].replace(/ /g,"");
               match["map"] = entry.i1;
-              match["date"] = moment(entry.date).format('DD | MMMM | YYYY hh:mm');
+              match["date"] = moment(entry.date).format('DD | MMMM | YYYY');
 
               match["team1"] = entry.teams[0];
               match["team2"] = entry.teams[1];

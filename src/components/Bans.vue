@@ -108,7 +108,6 @@ export default {
               }.bind(this));
             }
             this.banAxiosOffset++;
-            // this.fetchBans();
           }
           this.amountBans += len;
         })
