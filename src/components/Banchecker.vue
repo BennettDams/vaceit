@@ -20,11 +20,11 @@
   <div class="section center-align">
     <div class="row">
       <div class="col s12">
-        <h2>STATUS: {{ fetchBansStatus }}</h2>
+        <h3>STATUS: {{ fetchBansStatus }}</h3>
         <div class="progress">
           <div class="indeterminate"></div>
         </div>
-        <h2>LOADED SO FAR: {{ amountLoaded }}</h2>
+        <h4>LOADED SO FAR: {{ amountLoaded }}</h4>
 
       </div>
     </div>

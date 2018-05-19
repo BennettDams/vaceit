@@ -18,7 +18,8 @@ import M from 'materialize-css'
 
 export const store = new Vue({
   data: {
-    accountId: ''
+    accountId: '',
+    accountName: ''
   }
 })
 

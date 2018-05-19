@@ -39,6 +39,7 @@ export default {
   created() {},
   methods: {
     searchedAccount() {
+      store.accountName = this.username;
       this.fetchAccountIdByUsername(this.username);
     },
     fetchAccountIdByUsername(username) {

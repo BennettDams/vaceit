@@ -5,8 +5,6 @@
       <div class="row">
         <div class="col s12">
 
-          accountId: {{ accountId }}
-
           <ul class="collapsible expandable">
             <li v-for="(match, index) in matches" :key="index">
 
@@ -18,11 +16,11 @@
                   </div>
 
                   <div class="col s4">
-                    WIN
+                    {{ match.matchResult }}
                   </div>
 
                   <div class="col s2">
-                    <span class="chip">{{ match.scoreTeam1 }}</span> - <span class="chip">{{ match.scoreTeam2 }}</span>
+                    <span class="chip">{{ match.scoreTeamOwn }}</span> - <span class="chip">{{ match.scoreTeamEnemy }}</span>
                   </div>
 
                   <div class="col s2">
@@ -35,14 +33,14 @@
               <div class="col s12 collapsible-body deep-orange lighten-5 orange-text text-darken-4">
 
                 <div class="col s2">
-                  <h1>{{ match.scoreTeam1 }}</h1>
+                  <h1>{{ match.scoreTeamOwn }}</h1>
                 </div>
 
                 <div class="col s8 matches-collapsible-middle">
 
                   <div class="col s4">
                     <ul class="">
-                      <li v-for="(player, index) in match.team1players" :key="index">
+                      <li v-for="(player, index) in match.playersTeamOwn" :key="index">
                         <span class="center">{{ player.nickname }}</span>
                       </li>
                     </ul>
@@ -52,7 +50,7 @@
                   </div>
                   <div class="col s4">
                     <ul class="">
-                      <li v-for="(player, index) in match.team2players" :key="index">
+                      <li v-for="(player, index) in match.playersTeamEnemy" :key="index">
                         <span class="center">{{ player.nickname }}</span>
                       </li>
                     </ul>
@@ -60,7 +58,7 @@
                 </div>
 
                 <div class="col s2">
-                  <h1>{{ match.scoreTeam2 }}</h1>
+                  <h1>{{ match.scoreTeamEnemy }}</h1>
                 </div>
 
               </div>
@@ -86,6 +84,7 @@
     data() {
       return {
         accountId: store.accountId,
+        accountName: store.accountName,
         matches: [],
         matchesAxiosSize: 30,
         matchesAxiosPage: 0
@@ -129,29 +128,47 @@
           .then((response) => {
             var matchDetails = response.data;
             matchDetails.forEach(function(entry) {
-              var match = {};
+              let match = {};
               match["matchId"] = matchId;
               match["score"] = entry.i18;
-              match["scoreTeam1"] = match.score.split("/")[0].replace(/ /g,"");
-              match["scoreTeam2"] = match.score.split("/")[1].replace(/ /g,"");
               match["map"] = entry.i1;
               match["date"] = moment(entry.date).format('DD | MMMM | YYYY');
 
-              match["team1"] = entry.teams[0];
-              match["team2"] = entry.teams[1];
-              match["team1players"] = entry.teams[0].players;
-              match["team2players"] = entry.teams[1].players;
+              var scores = [];
+              scores[0] = match.score.split("/")[0].replace(/ /g,"");
+              scores[1] = match.score.split("/")[1].replace(/ /g,"");
 
-              match["team1player1"] = entry.teams[0].players[0];
-              match["team1player2"] = entry.teams[0].players[1];
-              match["team1player3"] = entry.teams[0].players[2];
-              match["team1player4"] = entry.teams[0].players[3];
-              match["team1player5"] = entry.teams[0].players[4];
-              match["team2player1"] = entry.teams[1].players[0];
-              match["team2player2"] = entry.teams[1].players[1];
-              match["team2player3"] = entry.teams[1].players[2];
-              match["team2player4"] = entry.teams[1].players[3];
-              match["team2player5"] = entry.teams[1].players[4];
+              var teamIdOwn;
+              var teamIdEnemy;
+              var ownIsTeam1 = false;
+              entry.teams[0].players.forEach(function(entry) {
+                if (entry.nickname == store.accountName) {
+                  ownIsTeam1 = true;
+                }
+              });
+
+              if (ownIsTeam1) {
+                teamIdOwn = 0;
+                teamIdEnemy = 1;
+              } else {
+                teamIdOwn = 1;
+                teamIdEnemy = 0;
+              }
+
+              match["scoreTeamOwn"] = parseInt(scores[teamIdOwn]);
+              match["scoreTeamEnemy"] = parseInt(scores[teamIdEnemy]);
+
+              if (match.scoreTeamOwn > match.scoreTeamEnemy) {
+                match["matchResult"] = "WIN";
+                match["matchWin"] = true;
+              } else {
+                match["matchResult"] = "LOSS";
+                match["matchWin"] = false;
+              }
+
+              match["playersTeamOwn"] = entry.teams[teamIdOwn].players;
+              match["playersTeamEnemy"] = entry.teams[teamIdEnemy].players;
+
               this.matches.push(match);
             }.bind(this));
           })
