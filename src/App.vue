@@ -1,29 +1,66 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
-  </div>
+  <v-app id="VACEIT"
+         dark>
+
+    <Sidebar></Sidebar>
+
+    <Toolbar></Toolbar>
+
+    <v-content>
+      <v-container fluid
+                   fill-height>
+        <v-layout justify-center
+                  align-center>
+          <v-flex shrink>
+            <v-tooltip right>
+              <v-btn slot="activator"
+                     :href="source"
+                     icon
+                     large
+                     target="_blank">
+                <v-icon large>code</v-icon>
+              </v-btn>
+              <span>Source</span>
+            </v-tooltip>
+            <v-tooltip right>
+              <v-btn slot="activator"
+                     icon
+                     large
+                     href="https://codepen.io/johnjleider/pen/qxQWda"
+                     target="_blank">
+                <v-icon large>mdi-codepen</v-icon>
+              </v-btn>
+              <span>Codepen</span>
+            </v-tooltip>
+          </v-flex>
+        </v-layout>
+      </v-container>
+    </v-content>
+
+    <PageFooter></PageFooter>
+
+  </v-app>
 </template>
 
-<style lang="scss">
-#app {
-  font-family: "Avenir", Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-#nav {
-  padding: 30px;
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-    &.router-link-exact-active {
-      color: #42b983;
-    }
+<script>
+import Toolbar from "@/components/Toolbar";
+import Sidebar from "@/components/Sidebar";
+import PageFooter from "@/components/PageFooter";
+
+export default {
+  name: "App",
+  components: {
+    Toolbar,
+    Sidebar,
+    PageFooter
+  },
+  props: {
+    source: String
+  },
+  data() {
+    return {
+      drawer: null
+    };
   }
-}
-</style>
+};
+</script>
