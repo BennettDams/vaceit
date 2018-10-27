@@ -3,6 +3,7 @@ import Router from "vue-router";
 import Home from "./views/Home.vue";
 import About from "./views/About.vue";
 import Bans from "./views/Bans.vue";
+import Matches from "./views/Matches.vue";
 
 Vue.use(Router);
 
@@ -31,6 +32,11 @@ export default new Router({
       path: "/bans",
       name: "bans",
       component: Bans
+    },
+    {
+      path: "/matches",
+      name: "matches",
+      component: Matches
     }
   ]
 });

@@ -9,7 +9,9 @@
 
       <v-content>
         <v-container>
-          <router-view></router-view>
+          <transition name="slide">
+            <router-view></router-view>
+          </transition>
         </v-container>
       </v-content>
 

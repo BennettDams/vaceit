@@ -5,7 +5,10 @@
     <!-- <v-toolbar-side-icon @click.stop="toggleDrawer()"></v-toolbar-side-icon> -->
 
     <v-toolbar-title>
-      <h1 class="display-2 font-weight-thin">VACEIT</h1>
+      <h1 class="display-2 font-weight-thin text-xs-center">
+        <span class="primary--text">VAC</span>
+        <span>EIT</span>
+      </h1>
 
     </v-toolbar-title>
 

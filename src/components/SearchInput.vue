@@ -51,6 +51,7 @@ export default {
       this.fetchAccountIdFromAPI();
     },
     async fetchAccountIdFromAPI() {
+      console.log("fetchAccountIdFromAPI");
       let config = {
         headers: {
           accept: "application/json",
@@ -64,7 +65,6 @@ export default {
 
       try {
         const response = await axios.get(this.url, config);
-        console.log("fetchAccountIdFromAPI", response.data);
         this.setPlayer(response.data);
       } catch (error) {
         console.error(error);
