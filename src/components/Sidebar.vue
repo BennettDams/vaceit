@@ -26,16 +26,20 @@
 </template>
 
 <script>
-import store from "@/store";
+import { mapState } from "vuex";
 export default {
   name: "Sidebar",
   data() {
     return {};
   },
   computed: {
-    drawer() {
-      return store.state.drawer;
-    }
+    ...mapState({
+      player: state => state.player
+    })
+    // ...mapGetters("cart", {
+    //   products: "cartProducts",
+    //   total: "cartTotalPrice"
+    // })
   }
 };
 </script>

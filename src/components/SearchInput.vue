@@ -1,11 +1,12 @@
 <template>
-  <v-form v-model="valid">
+  <v-form @submit.prevent>
     <v-layout row
               align-center>
 
       <v-flex sm11>
 
-        <v-text-field v-model="searchInput"
+        <v-text-field @keyup.enter.native="onInputEnter()"
+                      v-model="searchInput"
                       :rules="searchInputRules"
                       label="   "
                       prepend-icon="search"
@@ -27,21 +28,51 @@
 </template>
 
 <script>
+import axios from "axios";
 import InfoDialog from "@/components/InfoDialog.vue";
 export default {
   name: "SearchInput",
   components: { InfoDialog },
   data() {
     return {
+      url: "https://open.faceit.com/data/v4/players",
+      key: process.env.VUE_APP_FACEIT_API_KEY,
+      axiosInstance: {},
       dialogInfo: false,
       searchInput: "",
       searchInputRules: [
         v => !!v || "Input something you doofus",
         v => v.length <= 12 || "Names must be between 3 and 12 characters"
-      ],
-      t:
-        "Nicknames can be made of letters (a-z, A-Z), numbers (0-9), spaces, '_' and '-' only."
+      ]
     };
+  },
+  methods: {
+    onInputEnter() {
+      this.fetchAccountIdFromAPI();
+    },
+    async fetchAccountIdFromAPI() {
+      let config = {
+        headers: {
+          accept: "application/json",
+          Authorization: "Bearer " + this.key
+        },
+        params: {
+          nickname: this.searchInput,
+          game: "csgo"
+        }
+      };
+
+      try {
+        const response = await axios.get(this.url, config);
+        console.log("fetchAccountIdFromAPI", response.data);
+        this.setPlayer(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    setPlayer(player) {
+      this.$store.dispatch("setPlayer", player);
+    }
   }
 };
 </script>

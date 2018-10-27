@@ -1,20 +1,22 @@
 <template>
-  <v-app id="VACEIT"
-         dark>
+  <div id="app">
+    <v-app id="vuetify-app"
+           dark>
 
-    <!-- <Sidebar></Sidebar> -->
+      <!-- <Sidebar></Sidebar> -->
 
-    <Toolbar></Toolbar>
+      <Toolbar></Toolbar>
 
-    <v-content>
-      <v-container>
-        <router-view></router-view>
-      </v-container>
-    </v-content>
+      <v-content>
+        <v-container>
+          <router-view></router-view>
+        </v-container>
+      </v-content>
 
-    <PageFooter></PageFooter>
+      <PageFooter></PageFooter>
 
-  </v-app>
+    </v-app>
+  </div>
 </template>
 
 <script>

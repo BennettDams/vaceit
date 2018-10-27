@@ -14,7 +14,7 @@
     <v-layout row
               class="mb-5">
       <v-flex x12>
-        <h1 class="display-3 font-weight-thin secondary--text font-italic text-xs-center">Check former enemies' bans</h1>
+        <h1 class="display-3 font-weight-thin secondary--text font-italic text-xs-center">Check former enemy's bans</h1>
       </v-flex>
     </v-layout>
 
@@ -23,7 +23,8 @@
     <v-layout row
               class="mb-5"
               justify-center>
-      <v-flex xs11 md9>
+      <v-flex xs11
+              md9>
         <SearchInput></SearchInput>
       </v-flex>
     </v-layout>
@@ -32,9 +33,15 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
 import SearchInput from "@/components/SearchInput.vue";
 export default {
   name: "Home",
-  components: { SearchInput }
+  components: { SearchInput },
+  computed: {
+    ...mapState({
+      player: state => state.player
+    })
+  }
 };
 </script>

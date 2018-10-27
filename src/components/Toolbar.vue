@@ -6,22 +6,27 @@
 
     <v-toolbar-title>
       <h1 class="display-2 font-weight-thin">VACEIT</h1>
+
     </v-toolbar-title>
 
     <v-spacer></v-spacer>
 
-    <!-- <v-text-field flat
-                  solo-inverted
-                  hide-details
-                  prepend-inner-icon="search"
-                  label="SEARCH FOR PLAYERS"
-                  class="hidden-sm-and-down">
-    </v-text-field> -->
-
     <v-toolbar-items>
+
+      <v-btn v-if="player.avatar">
+        <v-avatar justify-center
+                  :title="player.nickname"
+                  size="40px">
+          <img :src="player.avatar"
+               alt="avatar">
+        </v-avatar>
+      </v-btn>
+
+      <v-btn flat>username: {{ player.nickname }}</v-btn>
+      <v-btn flat>account id: {{ player.player_id }}</v-btn>
       <v-btn to="/"
              flat>
-        <v-icon>home</v-icon>
+        <v-icon>search</v-icon>
       </v-btn>
       <v-btn to="/bans"
              flat>BANS</v-btn>
@@ -29,6 +34,7 @@
              flat>MATCHES</v-btn>
       <v-btn to="/about"
              flat>ABOUT</v-btn>
+
     </v-toolbar-items>
 
   </v-toolbar>
@@ -36,15 +42,20 @@
 </template>
     
 <script>
-import store from "@/store";
+import { mapState } from "vuex";
 export default {
   name: "Sidebar",
   data() {
     return {};
   },
+  computed: {
+    ...mapState({
+      player: state => state.player
+    })
+  },
   methods: {
     toggleDrawer() {
-      store.dispatch("toggleDrawer");
+      this.$store.dispatch("toggleDrawer");
     }
   }
 };

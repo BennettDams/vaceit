@@ -4,7 +4,7 @@
     <v-layout justify-center
               align-center>
       <v-flex shrink>
-aSD
+        aSD
       </v-flex>
     </v-layout>
   </v-container>
