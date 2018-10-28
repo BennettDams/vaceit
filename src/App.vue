@@ -5,7 +5,7 @@
 
       <!-- <Sidebar></Sidebar> -->
 
-      <Toolbar></Toolbar>
+      <Navbar></Navbar>
 
       <v-content>
         <v-container>
@@ -22,14 +22,14 @@
 </template>
 
 <script>
-import Toolbar from "@/components/Toolbar";
+import Navbar from "@/components/Navbar";
 // import Sidebar from "@/components/Sidebar";
 import PageFooter from "@/components/PageFooter";
 
 export default {
   name: "App",
   components: {
-    Toolbar,
+    Navbar,
     // Sidebar,
     PageFooter
   },

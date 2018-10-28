@@ -1,62 +1,90 @@
 <template>
   <div id="matches">
 
-    <ViewHeader title="MATCHES"></ViewHeader>
+    <PageHeader title="MATCHES"></PageHeader>
 
     <v-layout row
-              wrap>
-      <v-flex xs12>
-        <v-avatar size=120>
-          <v-img :src="player.avatar"
-                 :lazy-src="player.avatar"
-                 aspect-ratio="1"
-                 class="grey lighten-2">
-          </v-img>
-        </v-avatar>
-        <p class="">{{ player.nickname }}</p>
-        <p class=" ">{{ matches.length }} MATCHES</p>
+              wrap
+              class="mb-5">
+
+      <v-flex xs7>
+        <v-card class="primary--text transparent"
+                style="background-color: rgba(100,100,100,1);">
+          <v-layout>
+
+            <v-flex xs12
+                    sm6
+                    md8
+                    align-center
+                    justify-center
+                    layout
+                    text-xs-center
+                    class="py-3">
+              <v-avatar size=120>
+                <v-img :src="player.avatar"
+                       :lazy-src="player.avatar"
+                       aspect-ratio="1"
+                       class="grey lighten-2">
+                </v-img>
+              </v-avatar>
+            </v-flex>
+
+            <v-flex xs7>
+              <v-card-title primary-title>
+                <div>
+                  <div class="secondary--text headline my-2">{{ player.nickname }}</div>
+                  <v-divider light
+                             class="my-2"></v-divider>
+                  <div>{{ matches.length }} MATCHES</div>
+                  <div>ELO: {{ player.games.csgo.faceit_elo }}</div>
+                  <div>SKILL LEVEL: {{ player.games.csgo.skill_level }}</div>
+                </div>
+              </v-card-title>
+            </v-flex>
+          </v-layout>
+        </v-card>
       </v-flex>
+
     </v-layout>
 
     <v-layout row
               wrap>
       <v-flex xs12>
 
-        <v-data-table :headers="headers"
+        <v-data-table ref="dTable"
+                      :headers="headers"
                       :items="matches"
-                      :search="search"
-                      :pagination.sync="pagination"
                       hide-actions
-                      class="elevation-1">
-          <template slot="headerCell"
-                    slot-scope="props">
-            <v-tooltip bottom>
-              <span slot="activator">
-                {{ props.header.text }}
-              </span>
-              <span>
-                {{ props.header.text }}
-              </span>
-            </v-tooltip>
-          </template>
+                      item-key="id"
+                      :pagination.sync="pagination"
+                      expand>
           <template slot="items"
                     slot-scope="props">
-
-            <td class="text-xs-center">{{ props.index +1 }}</td>
-            <td class="text-xs-center">{{ props.item.started_at | dateFromUnix }}</td>
-            <td class="text-xs-center">{{ props.item.competition_name }}</td>
-            <td class="text-xs-center">
-              <v-btn color=""
-                     :href="fixFaceitUrl(props.item.faceit_url)">
-                <v-icon color="orange darken-2">gamepad</v-icon>
-              </v-btn>
-            </td>
-
+            <tr @click="props.expanded = !props.expanded">
+              <td class="text-xs-center">{{ props.item.id }}</td>
+              <td class="text-xs-center">{{ props.item.startedAt }}</td>
+              <td class="text-xs-center">{{ props.item.competitionName }}</td>
+              <td class="text-xs-center">{{ props.item.teams.team1.nickname }}</td>
+              <td class="text-xs-center">{{ props.item.teams.team2.nickname }}</td>
+              <!-- <td class="text-xs-center">{{ props.item["resultScore"] }}</td> -->
+              <td class="text-xs-center">
+                <v-btn color=""
+                       :href="props.item.faceit_url">
+                  <v-icon color="orange darken-2">gamepad</v-icon>
+                </v-btn>
+              </td>
+            </tr>
+          </template>
+          <template slot="expand"
+                    slot-scope="props">
+            <v-card flat>
+              <v-card-text>Peek-a-boo!</v-card-text>
+            </v-card>
           </template>
         </v-data-table>
-        <div class="
-                     text-xs-center
-                     pt-2">
+
+        <!-- PAGINATION -->
+        <div class="text-xs-center pt-2">
           <v-pagination v-model="pagination.page"
                         :length="pages"></v-pagination>
         </div>
@@ -69,13 +97,11 @@
 
 <script>
 import axios from "axios";
-import format from "date-fns/format";
-import addSeconds from "date-fns/add_seconds";
-import ViewHeader from "@/components/ViewHeader.vue";
-import { mapState } from "vuex";
+import PageHeader from "@/components/PageHeader.vue";
+import { mapState, mapGetters } from "vuex";
 export default {
   name: "Matches",
-  components: { ViewHeader },
+  components: { PageHeader },
   data() {
     return {
       baseUrl: "https://open.faceit.com/data/v4/players",
@@ -83,54 +109,64 @@ export default {
       search: "",
       pagination: {
         page: 1,
-        rowsPerPage: 70
+        rowsPerPage: 70,
+        // sortBy: "date",
+        descending: false
       },
-      selected: [],
       headers: [
         {
           text: "#",
           align: "center",
-          sortable: true,
-          value: "match_id"
+          // sortable: true,
+          value: "id"
         },
         {
           text: "DATE",
           align: "center",
-          sortable: true,
-          value: "match_id"
+          // sortable: true,
+          value: "date"
         },
+        // {
+        //   text: "RESULT",
+        //   align: "center",
+        //   // sortable: true,
+        //   value: "result"
+        // },
         {
           text: "GAME MODE",
           align: "center",
-          sortable: true,
-          value: "match_id"
+          // sortable: true,
+          value: "gameMode"
         },
         {
-          text: "MATCH URL",
+          text: "TEAM 1",
           align: "center",
-          sortable: true,
-          value: "match_id"
+          // sortable: true,
+          value: "team1"
+        },
+        {
+          text: "TEAM 2",
+          align: "center",
+          // sortable: true,
+          value: "team2"
+        },
+        {
+          text: "MATCH ON FACEIT",
+          align: "center",
+          // sortable: true,
+          value: "matchOnFACEIT"
         }
       ]
     };
   },
   mounted() {
-    if (this.player.player_id) {
-      this.fetchMatches();
-    }
-  },
-  filters: {
-    dateFromUnix: function(value) {
-      if (!value) return "";
-      value = format(addSeconds(new Date(0), value), "YYYY-MM-DD hh:mm");
-      return value;
-    }
+    setTimeout(this.expandFirstRow, 2000);
   },
   computed: {
     ...mapState({
-      player: state => state.player,
-      matches: state => state.matches
+      player: state => state.player
     }),
+    ...mapGetters(["matches"]),
     pages() {
       if (
         this.pagination.rowsPerPage == null ||
@@ -144,35 +180,9 @@ export default {
     }
   },
   methods: {
-    fixFaceitUrl(url) {
-      return url.replace("{lang}", "en");
-    },
-    async fetchMatches() {
-      console.log("fetching matches");
-      let config = {
-        headers: {
-          accept: "application/json",
-          Authorization: "Bearer " + this.key
-        },
-        params: {
-          from: 1293840000,
-          game: "csgo",
-          offset: 0,
-          limit: 100
-        }
-      };
-
-      let url = this.baseUrl + "/" + this.player.player_id + "/history";
-
-      try {
-        const response = await axios.get(url, config);
-        this.setMatchesRaw(response.data.items);
-      } catch (error) {
-        console.error(error);
-      }
-    },
-    setMatchesRaw(matches) {
-      this.$store.dispatch("setMatchesRaw", matches);
+    expandFirstRow() {
+      const item = this.matches[0];
+      this.$set(this.$refs.dTable.expanded, item.match_id, true);
     }
   }
 };

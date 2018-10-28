@@ -8,7 +8,6 @@
         <v-text-field @keyup.enter.native="onInputEnter()"
                       v-model="searchInput"
                       :rules="searchInputRules"
-                      label="   "
                       prepend-icon="search"
                       clearable
                       hint="FACEIT username or account URL"
@@ -28,50 +27,32 @@
 </template>
 
 <script>
-import axios from "axios";
 import InfoDialog from "@/components/InfoDialog.vue";
+import { setTimeout } from "timers";
 export default {
   name: "SearchInput",
   components: { InfoDialog },
   data() {
     return {
-      url: "https://open.faceit.com/data/v4/players",
-      key: process.env.VUE_APP_FACEIT_API_KEY,
-      axiosInstance: {},
       dialogInfo: false,
-      searchInput: "",
+      searchInput: "SHEIX",
       searchInputRules: [
         v => !!v || "Input something you doofus",
         v => v.length <= 12 || "Names must be between 3 and 12 characters"
       ]
     };
   },
+  mounted() {
+    this.$store.dispatch("fetchAccountIdByName", this.searchInput);
+    setTimeout(this.fetchMatches, 1000);
+  },
   methods: {
     onInputEnter() {
-      this.fetchAccountIdFromAPI();
+      this.$store.dispatch("fetchAccountIdByName", this.searchInput);
+      setTimeout(this.fetchMatches, 1000);
     },
-    async fetchAccountIdFromAPI() {
-      console.log("fetchAccountIdFromAPI");
-      let config = {
-        headers: {
-          accept: "application/json",
-          Authorization: "Bearer " + this.key
-        },
-        params: {
-          nickname: this.searchInput,
-          game: "csgo"
-        }
-      };
-
-      try {
-        const response = await axios.get(this.url, config);
-        this.setPlayer(response.data);
-      } catch (error) {
-        console.error(error);
-      }
-    },
-    setPlayer(player) {
-      this.$store.dispatch("setPlayer", player);
+    fetchMatches() {
+      this.$store.dispatch("fetchMatches");
     }
   }
 };

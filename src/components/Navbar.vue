@@ -25,8 +25,7 @@
         </v-avatar>
       </v-btn>
 
-      <v-btn flat>username: {{ player.nickname }}</v-btn>
-      <v-btn flat>account id: {{ player.player_id }}</v-btn>
+      <v-btn flat>{{ player.nickname }}</v-btn>
       <v-btn to="/"
              flat>
         <v-icon>search</v-icon>
