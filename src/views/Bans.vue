@@ -91,7 +91,9 @@
              :value="true"
              color="secondary"
              type="info">
-      Search for a user first
+      <h1 class="font-weight-thin display-1">
+        Search for a user first
+      </h1>
     </v-alert>
 
   </div>

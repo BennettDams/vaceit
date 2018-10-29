@@ -28,23 +28,19 @@
 
 <script>
 import InfoDialog from "@/components/InfoDialog.vue";
-import { setTimeout } from "timers";
+// import { setTimeout } from "timers";
 export default {
   name: "SearchInput",
   components: { InfoDialog },
   data() {
     return {
       dialogInfo: false,
-      searchInput: "SHEIX",
+      searchInput: "",
       searchInputRules: [
         v => !!v || "Input something you doofus",
         v => v.length <= 12 || "Names must be between 3 and 12 characters"
       ]
     };
-  },
-  mounted() {
-    this.$store.dispatch("fetchAccountIdByName", this.searchInput);
-    setTimeout(this.fetchMatches, 1000);
   },
   methods: {
     onInputEnter() {

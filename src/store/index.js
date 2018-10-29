@@ -17,28 +17,128 @@ function dateFromUnix(value) {
   return value;
 }
 
+axios.interceptors.response.use(undefined, function axiosRetryInterceptor(err) {
+  var config = err.config;
+  // If config does not exist or the retry option is not set, reject
+  if (!config || !config.retry) return Promise.reject(err);
+
+  // Set the variable for keeping track of the retry count
+  config.__retryCount = config.__retryCount || 0;
+
+  // Check if we've maxed out the total number of retries
+  if (config.__retryCount >= config.retry) {
+    // Reject with the error
+    return Promise.reject(err);
+  }
+
+  // Increase the retry count
+  config.__retryCount += 1;
+
+  // Create new promise to handle exponential backoff
+  var backoff = new Promise(function(resolve) {
+    setTimeout(function() {
+      resolve();
+    }, config.retryDelay || 1);
+  });
+
+  // Return the promise in which recalls axios to retry the request
+  return backoff.then(function() {
+    return axios(config);
+  });
+});
+
 export default new Vuex.Store({
   state: {
     player: {},
-    drawer: true,
     matchesRaw: []
   },
   getters: {
     matches: state => {
       let result = [];
-      result = state.matchesRaw.map((item, index) => ({
-        id: index + 1,
-        matchId: item["match_id"],
-        matchDetails: item["matchDetails"],
-        startedAt: dateFromUnix(item["started_at"]),
-        finishedAt: dateFromUnix(item["finished_at"]),
-        competitionName: item["competition_name"],
-        teams: {
-          team1: item["teams"]["faction1"],
-          team2: item["teams"]["faction2"]
-        },
-        matchUrl: fixFaceitUrl(item["faceit_url"])
-      }));
+      result = state.matchesRaw.map((item, index) => {
+        let obj = {};
+
+        obj = {
+          id: index + 1,
+          matchId: item["match_id"],
+          startedAt: dateFromUnix(item["started_at"]),
+          finishedAt: dateFromUnix(item["finished_at"]),
+          competitionName: item["competition_name"],
+          matchUrl: fixFaceitUrl(item["faceit_url"])
+        };
+
+        if (item["matchDetails"]) {
+          obj["matchDetails"] = {
+            score: item["matchDetails"]["round_stats"]["Score"],
+            map: item["matchDetails"]["round_stats"]["Map"]
+          };
+
+          let ownTeam1 = null;
+          let teamNumberOwn = null;
+          let teamNumberEnemy = null;
+          item["matchDetails"]["teams"][0]["players"].forEach(e => {
+            if (e.player_id == state.player.player_id) {
+              ownTeam1 = true;
+            }
+          });
+
+          if (ownTeam1) {
+            teamNumberOwn = 1;
+            teamNumberEnemy = 2;
+          } else {
+            teamNumberOwn = 2;
+            teamNumberEnemy = 1;
+          }
+
+          obj["matchDetails"]["teams"] = {
+            teamOwn: {
+              teamId:
+                item["matchDetails"]["teams"][teamNumberOwn - 1]["team_id"],
+              winner:
+                item["matchDetails"]["teams"][teamNumberOwn - 1]["team_stats"][
+                  "Team Win"
+                ] == "1"
+                  ? true
+                  : false,
+              name:
+                item["matchDetails"]["teams"][teamNumberOwn - 1]["team_stats"][
+                  "Team"
+                ],
+              players:
+                item["matchDetails"]["teams"][teamNumberOwn - 1]["players"],
+              premade:
+                item["matchDetails"]["teams"][teamNumberOwn - 1]["premade"],
+              finalScore:
+                item["matchDetails"]["teams"][teamNumberOwn - 1]["team_stats"][
+                  "Final Score"
+                ]
+            },
+            teamEnemy: {
+              teamId:
+                item["matchDetails"]["teams"][teamNumberEnemy - 1]["team_id"],
+              winner:
+                item["matchDetails"]["teams"][teamNumberOwn - 1]["team_stats"][
+                  "Team Win"
+                ] == "1"
+                  ? true
+                  : false,
+              name:
+                item["matchDetails"]["teams"][teamNumberEnemy - 1][
+                  "team_stats"
+                ]["Team"],
+              players:
+                item["matchDetails"]["teams"][teamNumberEnemy - 1]["players"],
+              premade:
+                item["matchDetails"]["teams"][teamNumberEnemy - 1]["premade"],
+              finalScore:
+                item["matchDetails"]["teams"][teamNumberEnemy - 1][
+                  "team_stats"
+                ]["Final Score"]
+            }
+          };
+        }
+        return obj;
+      });
       return result;
     },
     enemies: (state, getters) => {
@@ -64,11 +164,6 @@ export default new Vuex.Store({
         }
         return e;
       });
-    },
-    UPDATE_DRAWER(state) {
-      console.log("draw");
-
-      state.drawer = !state.drawer;
     }
   },
   actions: {
@@ -98,7 +193,7 @@ export default new Vuex.Store({
           console.log(error);
         });
     },
-    fetchMatches: ({ commit, state, dispatch }) => {
+    fetchMatches: ({ commit, state, dispatch, getters }) => {
       console.log("ACT: fetching matches");
       let baseUrl = "https://open.faceit.com/data/v4/players";
 
@@ -121,13 +216,16 @@ export default new Vuex.Store({
         .get(url, config)
         .then(function(response) {
           commit("UPDATE_MATCHES_RAW", response.data.items);
-          dispatch("fetchMatchDetails");
+          getters.matches.forEach(e => {
+            dispatch("fetchMatchDetails", e.matchId);
+          });
+          // dispatch("fetchMatchDetails");
         })
         .catch(function(error) {
           console.log(error);
         });
     },
-    fetchMatchDetails: ({ commit, state }) => {
+    fetchMatchDetails: ({ commit }, matchId) => {
       console.log("ACT: fetching match details");
       let baseUrl = "https://open.faceit.com/data/v4/matches/";
 
@@ -135,26 +233,49 @@ export default new Vuex.Store({
         headers: {
           accept: "application/json",
           Authorization: "Bearer " + process.env.VUE_APP_FACEIT_API_KEY
-        }
+        },
+        retry: 8,
+        retryDelay: 1000
       };
-
-      state.matchesRaw.forEach(e => {
-        let url = baseUrl + e["match_id"];
-        axios
-          .get(url, config)
-          .then(function(response) {
-            commit("UPDATE_MATCH_DETAILS", {
-              matchDetails: response.data,
-              matchId: e["match_id"]
-            });
-          })
-          .catch(function(error) {
-            console.log(error);
+      let url = baseUrl + matchId + "/stats";
+      axios
+        .get(url, config)
+        .then(function(response) {
+          commit("UPDATE_MATCH_DETAILS", {
+            matchDetails: response.data.rounds[0],
+            matchId: matchId
           });
-      });
-    },
-    toggleDrawer({ commit }) {
-      commit("UPDATE_DRAWER");
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
     }
+    // fetchMatchDetails: ({ commit, state }) => {
+    //   console.log("ACT: fetching match details");
+    //   let baseUrl = "https://open.faceit.com/data/v4/matches/";
+
+    //   let config = {
+    //     headers: {
+    //       accept: "application/json",
+    //       Authorization: "Bearer " + process.env.VUE_APP_FACEIT_API_KEY
+    //     },
+    //     retry: 8,
+    //     retryDelay: 2000
+    //   };
+    //   state.matchesRaw.forEach(e => {
+    //     let url = baseUrl + e["match_id"] + "/stats";
+    //     axios
+    //       .get(url, config)
+    //       .then(function(response) {
+    //         commit("UPDATE_MATCH_DETAILS", {
+    //           matchDetails: response.data.rounds[0],
+    //           matchId: e["match_id"]
+    //         });
+    //       })
+    //       .catch(function(error) {
+    //         console.log(error);
+    //       });
+    //   });
+    // },
   }
 });

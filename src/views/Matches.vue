@@ -3,6 +3,12 @@
 
     <PageHeader title="MATCHES"></PageHeader>
 
+    <!-- <v-progress-linear v-if="player.player_id && isLoading"
+                       color="secondary"
+                       height="13"
+                       :indeterminate="true">
+    </v-progress-linear> -->
+
     <div v-if="matches.length > 0">
       <v-layout row
                 wrap
@@ -53,7 +59,7 @@
                                      :size="100"
                                      :width="15"
                                      :value="player.games.csgo.skill_level * 10"
-                                     :color="progressColor">
+                                     :color="faceitLevelColor">
                   <h1>{{ player.games.csgo.skill_level }}</h1>
                 </v-progress-circular>
               </v-flex>
@@ -81,15 +87,31 @@
                 <td class="text-xs-center">{{ props.item.id }}</td>
                 <td class="text-xs-center">{{ props.item.finishedAt }}</td>
                 <td class="text-xs-center">{{ props.item.competitionName }}</td>
-                <td class="text-xs-center">{{ props.item.teams.team1.nickname }}</td>
-                <td class="text-xs-center">{{ props.item.teams.team2.nickname }}</td>
-                <td v-if="props.item.matchDetails"
-                    class="text-xs-center">{{ props.item.matchDetails.results.score.faction1 }} | </td>
-                <td v-if="props.item.matchDetails"
-                    class="text-xs-center">{{ props.item.matchDetails.voting.map.pick[0] }} | </td>
+                <td class="text-xs-center">
+                  <span v-if="props.item.matchDetails">
+                    {{ props.item.matchDetails.map }}
+                  </span>
+                  <span v-else>
+                    //
+                  </span>
+                </td>
+                <td class="text-xs-center">
+                  <span v-if="props.item.matchDetails">
+                    <v-chip :color="props.item.matchDetails.teams.teamOwn.winner == true ? 'green' : 'error'"
+                            text-color="white"
+                            class="my-2 px-3">
+                      {{ props.item.matchDetails.teams.teamOwn.finalScore }}
+                      &ndash;
+                      {{ props.item.matchDetails.teams.teamEnemy.finalScore }}
+                    </v-chip>
+                  </span>
+                  <span v-else>
+                    //
+                  </span>
+                </td>
                 <td class="text-xs-center">
                   <v-btn color=""
-                         :href="props.item.faceit_url">
+                         :href="props.item.matchUrl">
                     <v-icon color="orange darken-2">gamepad</v-icon>
                   </v-btn>
                 </td>
@@ -99,8 +121,8 @@
                       slot-scope="props">
               <v-card flat>
                 <v-card-text>
-                  <p class="text-xs-center">{{ props.item.teams.team1.nickname }}</p>
-                  <p class="text-xs-center">{{ props.item.teams.team2.nickname }}</p>
+                  <p class="text-xs-center">{{ props.item.matchDetails.teams.teamOwn.name }}</p>
+                  <p class="text-xs-center">{{ props.item.matchDetails.teams.teamEnemy.name }}</p>
                 </v-card-text>
               </v-card>
             </template>
@@ -117,11 +139,13 @@
 
     </div>
 
-    <v-alert v-else
+    <v-alert v-else-if="!player.player_id"
              :value="true"
              color="secondary"
              type="info">
-      Search for a user first
+      <h1 class="font-weight-thin display-1">
+        Search for a user first
+      </h1>
     </v-alert>
 
   </div>
@@ -170,16 +194,16 @@ export default {
           value: "gameMode"
         },
         {
-          text: "TEAM 1",
+          text: "MAP",
           align: "center",
           // sortable: true,
-          value: "team1"
+          value: "map"
         },
         {
-          text: "TEAM 2",
+          text: "SCORE",
           align: "center",
           // sortable: true,
-          value: "team2"
+          value: "score"
         },
         {
           text: "MATCH ON FACEIT",
@@ -198,7 +222,14 @@ export default {
       player: state => state.player
     }),
     ...mapGetters(["matches"]),
-    progressColor() {
+    // isLoading() {
+    //   let loading = true;
+    //   loading = this.matches.every(e => {
+    //     !e["matchDetails"]["score"];
+    //   });
+    //   return loading;
+    // },
+    faceitLevelColor() {
       let color;
       let level = this.player.games.csgo.skill_level;
       if (level <= 4) {
