@@ -94,7 +94,7 @@ export default new Vuex.Store({
             teamOwn: {
               teamId:
                 item["matchDetails"]["teams"][teamNumberOwn - 1]["team_id"],
-              winner:
+              isWinner:
                 item["matchDetails"]["teams"][teamNumberOwn - 1]["team_stats"][
                   "Team Win"
                 ] == "1"
@@ -116,10 +116,10 @@ export default new Vuex.Store({
             teamEnemy: {
               teamId:
                 item["matchDetails"]["teams"][teamNumberEnemy - 1]["team_id"],
-              winner:
-                item["matchDetails"]["teams"][teamNumberOwn - 1]["team_stats"][
-                  "Team Win"
-                ] == "1"
+              isWinner:
+                item["matchDetails"]["teams"][teamNumberEnemy - 1][
+                  "team_stats"
+                ]["Team Win"] == "1"
                   ? true
                   : false,
               name:

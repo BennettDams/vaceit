@@ -97,7 +97,7 @@
                 </td>
                 <td class="text-xs-center">
                   <span v-if="props.item.matchDetails">
-                    <v-chip :color="props.item.matchDetails.teams.teamOwn.winner == true ? 'green' : 'error'"
+                    <v-chip :color="winOrLoseColor(props.item.matchDetails.teams.teamOwn.isWinner)"
                             text-color="white"
                             class="my-2 px-3">
                       {{ props.item.matchDetails.teams.teamOwn.finalScore }}
@@ -121,8 +121,93 @@
                       slot-scope="props">
               <v-card flat>
                 <v-card-text>
-                  <p class="text-xs-center">{{ props.item.matchDetails.teams.teamOwn.name }}</p>
-                  <p class="text-xs-center">{{ props.item.matchDetails.teams.teamEnemy.name }}</p>
+                  <v-layout row>
+                    <!-- <v-flex xs5>
+                      <p class="text-xs-center">{{ props.item.matchDetails.teams.teamOwn.name }}</p>
+                    </v-flex> -->
+
+                    <v-flex xs5
+                            align-center>
+                      <v-card xs3
+                              class="mx-5">
+
+                        <v-toolbar color="secondary"
+                                   dark>
+                          <v-toolbar-title class="text-xs-center">
+                            {{ props.item.matchDetails.teams.teamOwn.name }}
+                          </v-toolbar-title>
+
+                          <v-spacer></v-spacer>
+                        </v-toolbar>
+
+                        <v-list subheader>
+                          <v-list-tile v-for="player in props.item.matchDetails.teams.teamOwn.players"
+                                       :key="player.player_id"
+                                       avatar>
+                            <!-- <v-list-tile-avatar>
+                              <img :src="player.avatar">
+                            </v-list-tile-avatar> -->
+
+                            <v-list-tile-content>
+                              <v-list-tile-title v-html="player.nickname"></v-list-tile-title>
+                            </v-list-tile-content>
+
+                          </v-list-tile>
+                        </v-list>
+
+                        <v-divider></v-divider>
+
+                      </v-card>
+                    </v-flex>
+
+                    <v-flex xs2 layout
+                            align-center
+                            justify-center>
+                      <span :class="['display-2', 'text-xs-center', winOrLoseColor(props.item.matchDetails.teams.teamOwn.isWinner) + '--text']">
+                        {{ props.item.matchDetails.teams.teamOwn.finalScore }}
+                      </span>
+                      <span class="display-2 mx-4">&#58;</span>
+                      <span :class="['display-2', 'text-xs-center', winOrLoseColor(props.item.matchDetails.teams.teamEnemy.isWinner) + '--text']">
+                        {{ props.item.matchDetails.teams.teamEnemy.finalScore }}
+                      </span>
+                    </v-flex>
+
+                    <v-flex xs5
+                            align-center
+                            justify-center>
+                      <v-card xs3
+                              class="mx-5">
+
+                        <v-toolbar color="secondary"
+                                   dark>
+                          <v-toolbar-title class="text-xs-center">
+                            {{ props.item.matchDetails.teams.teamEnemy.name }}
+                          </v-toolbar-title>
+
+                          <v-spacer></v-spacer>
+                        </v-toolbar>
+
+                        <v-list subheader>
+                          <v-list-tile v-for="player in props.item.matchDetails.teams.teamEnemy.players"
+                                       :key="player.player_id"
+                                       avatar>
+                            <!-- <v-list-tile-avatar>
+                              <img :src="player.avatar">
+                            </v-list-tile-avatar> -->
+
+                            <v-list-tile-content>
+                              <v-list-tile-title v-html="player.nickname"></v-list-tile-title>
+                            </v-list-tile-content>
+
+                          </v-list-tile>
+                        </v-list>
+
+                        <v-divider></v-divider>
+
+                      </v-card>
+                    </v-flex>
+
+                  </v-layout>
                 </v-card-text>
               </v-card>
             </template>
@@ -256,13 +341,16 @@ export default {
     }
   },
   methods: {
+    winOrLoseColor(isWinner) {
+      return isWinner == true ? "green" : "error";
+    },
     expandFirstRow() {
       const item = this.matches[0];
-      this.$set(this.$refs.dTable.expanded, item.match_id, true);
+      this.$set(this.$refs.dTable.expanded, item.id, true);
     }
   }
 };
 </script>
 
-<style>
+<style lang="scss" src="@/styles/Matches.scss">
 </style>
