@@ -50,6 +50,7 @@ export default {
     onInputEnter() {
       this.$store.dispatch("fetchAccountIdByName", this.searchInput);
       setTimeout(this.fetchMatches, 1000);
+      this.$router.push("/matches");
     },
     fetchMatches() {
       this.$store.dispatch("fetchMatches");

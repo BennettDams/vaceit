@@ -3,85 +3,96 @@
 
     <PageHeader title="BANS"></PageHeader>
 
-    <v-layout row
-              wrap
-              class="mb-5">
+    <div v-if="enemies.length > 0">
 
-      <v-flex xs7>
-        <v-card class="primary--text transparent"
-                style="background-color: rgba(100,100,100,1);">
-          <v-layout>
+      <v-layout row
+                wrap
+                class="mb-5">
 
-            <v-flex xs12
-                    sm6
-                    md8
-                    align-center
-                    justify-center
-                    layout
-                    text-xs-center
-                    class="py-3">
-              <v-avatar size=120>
-                <v-img :src="player.avatar"
-                       :lazy-src="player.avatar"
-                       aspect-ratio="1"
-                       class="grey lighten-2">
-                </v-img>
-              </v-avatar>
-            </v-flex>
+        <v-flex xs7>
+          <v-card class="primary--text transparent"
+                  style="background-color: rgba(100,100,100,1);">
+            <v-layout>
 
-            <v-flex xs7>
-              <v-card-title primary-title>
-                <div>
-                  <div class="secondary--text headline my-2">{{ player.nickname }}</div>
-                  <v-divider light
-                             class="my-2"></v-divider>
-                  <div>{{ enemies.length }} ENEMIES</div>
-                  <div>ELO: {{ player.games.csgo.faceit_elo }}</div>
-                  <div>SKILL LEVEL: {{ player.games.csgo.skill_level }}</div>
-                </div>
-              </v-card-title>
-            </v-flex>
-          </v-layout>
-        </v-card>
-      </v-flex>
+              <v-flex xs12
+                      sm6
+                      md8
+                      align-center
+                      justify-center
+                      layout
+                      text-xs-center
+                      class="py-3">
+                <v-avatar size=120>
+                  <v-img :src="player.avatar"
+                         :lazy-src="player.avatar"
+                         aspect-ratio="1"
+                         class="grey lighten-2">
+                  </v-img>
+                </v-avatar>
+              </v-flex>
 
-    </v-layout>
+              <v-flex xs7>
+                <v-card-title primary-title>
+                  <div>
+                    <div class="secondary--text headline my-2">{{ player.nickname }}</div>
+                    <v-divider light
+                               class="my-2"></v-divider>
+                    <div>{{ enemies.length }} ENEMIES</div>
+                    <div>ELO: {{ player.games.csgo.faceit_elo }}</div>
+                    <div>SKILL LEVEL: {{ player.games.csgo.skill_level }}</div>
+                  </div>
+                </v-card-title>
+              </v-flex>
+            </v-layout>
+          </v-card>
+        </v-flex>
 
-    <v-layout row
-              wrap>
-      <v-flex xs12>
+      </v-layout>
 
-        <v-data-table ref="dTable"
-                      :headers="headers"
-                      :items="enemies"
-                      hide-actions
-                      item-key="id"
-                      :pagination.sync="pagination"
-                      expand>
-          <template slot="items"
-                    slot-scope="props">
-            <tr @click="props.expanded = !props.expanded">
-              <td class="text-xs-center">{{ props.item.id }}</td>
-              <td class="text-xs-center">{{ props.item.teams.team1.nickname }}</td>
-              <td class="text-xs-center">{{ props.item.teams.team1.nickname }}</td>
-            </tr>
-          </template>
-          <template slot="expand"
-                    slot-scope="props">
-            <v-card flat>
-              <v-card-text>Peek-a-boo!</v-card-text>
-            </v-card>
-          </template>
-        </v-data-table>
+      <v-layout row
+                wrap>
+        <v-flex xs12>
 
-        <!-- PAGINATION -->
-        <div class="text-xs-center pt-2">
-          <v-pagination v-model="pagination.page"
-                        :length="pages"></v-pagination>
-        </div>
+          <v-data-table ref="dTable"
+                        :headers="headers"
+                        :items="enemies"
+                        hide-actions
+                        item-key="id"
+                        :pagination.sync="pagination"
+                        expand>
+            <template slot="items"
+                      slot-scope="props">
+              <tr @click="props.expanded = !props.expanded">
+                <td class="text-xs-center">{{ props.item.id }}</td>
+                <td class="text-xs-center">{{ props.item.teams.team1.nickname }}</td>
+                <td class="text-xs-center">{{ props.item.teams.team1.nickname }}</td>
+              </tr>
+            </template>
+            <template slot="expand"
+                      slot-scope="props">
+              <v-card flat>
+                <v-card-text>Peek-a-boo!</v-card-text>
+              </v-card>
+            </template>
+          </v-data-table>
 
-      </v-flex>
-    </v-layout>
+          <!-- PAGINATION -->
+          <div class="text-xs-center pt-2">
+            <v-pagination v-model="pagination.page"
+                          :length="pages"></v-pagination>
+          </div>
+
+        </v-flex>
+      </v-layout>
+
+    </div>
+
+    <v-alert v-else
+             :value="true"
+             color="secondary"
+             type="info">
+      Search for a user first
+    </v-alert>
 
   </div>
 </template>

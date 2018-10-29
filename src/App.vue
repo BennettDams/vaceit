@@ -9,7 +9,8 @@
 
       <v-content>
         <v-container>
-          <transition name="slide">
+          <transition name="fade"
+                      mode="out-in">
             <router-view></router-view>
           </transition>
         </v-container>

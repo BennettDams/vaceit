@@ -3,7 +3,7 @@ import Vuex from "vuex";
 import axios from "axios";
 import format from "date-fns/format";
 import addSeconds from "date-fns/add_seconds";
-// import addMatchInfo from "@/util/addMatchInfo.js";
+// import getMatchDetails from "@/util/getMatchDetails.js";
 
 Vue.use(Vuex);
 
@@ -26,16 +26,17 @@ export default new Vuex.Store({
   getters: {
     matches: state => {
       let result = [];
-      // let result = addMatchInfo(state.matchesRaw);
       result = state.matchesRaw.map((item, index) => ({
         id: index + 1,
+        matchId: item["match_id"],
+        matchDetails: item["matchDetails"],
         startedAt: dateFromUnix(item["started_at"]),
+        finishedAt: dateFromUnix(item["finished_at"]),
         competitionName: item["competition_name"],
         teams: {
           team1: item["teams"]["faction1"],
           team2: item["teams"]["faction2"]
         },
-        matchId: item["match_id"],
         matchUrl: fixFaceitUrl(item["faceit_url"])
       }));
       return result;
@@ -55,7 +56,18 @@ export default new Vuex.Store({
       console.log("MUT: update matches raw");
       state.matchesRaw = payload;
     },
+    UPDATE_MATCH_DETAILS: (state, payload) => {
+      console.log("MUT: update match details");
+      state.matchesRaw = state.matchesRaw.map(e => {
+        if (e.match_id == payload.matchId) {
+          e["matchDetails"] = payload.matchDetails;
+        }
+        return e;
+      });
+    },
     UPDATE_DRAWER(state) {
+      console.log("draw");
+
       state.drawer = !state.drawer;
     }
   },
@@ -86,7 +98,7 @@ export default new Vuex.Store({
           console.log(error);
         });
     },
-    fetchMatches: ({ commit, state }) => {
+    fetchMatches: ({ commit, state, dispatch }) => {
       console.log("ACT: fetching matches");
       let baseUrl = "https://open.faceit.com/data/v4/players";
 
@@ -109,10 +121,37 @@ export default new Vuex.Store({
         .get(url, config)
         .then(function(response) {
           commit("UPDATE_MATCHES_RAW", response.data.items);
+          dispatch("fetchMatchDetails");
         })
         .catch(function(error) {
           console.log(error);
         });
+    },
+    fetchMatchDetails: ({ commit, state }) => {
+      console.log("ACT: fetching match details");
+      let baseUrl = "https://open.faceit.com/data/v4/matches/";
+
+      let config = {
+        headers: {
+          accept: "application/json",
+          Authorization: "Bearer " + process.env.VUE_APP_FACEIT_API_KEY
+        }
+      };
+
+      state.matchesRaw.forEach(e => {
+        let url = baseUrl + e["match_id"];
+        axios
+          .get(url, config)
+          .then(function(response) {
+            commit("UPDATE_MATCH_DETAILS", {
+              matchDetails: response.data,
+              matchId: e["match_id"]
+            });
+          })
+          .catch(function(error) {
+            console.log(error);
+          });
+      });
     },
     toggleDrawer({ commit }) {
       commit("UPDATE_DRAWER");
