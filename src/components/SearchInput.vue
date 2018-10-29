@@ -1,11 +1,15 @@
 <template>
   <v-form @submit.prevent>
     <v-layout row
-              align-center>
+              align-center
+              justify-center
+              layout>
 
       <v-flex sm11>
 
         <v-text-field @keyup.enter.native="onInputEnter()"
+                      class="font-weight-thin display-1"
+                      height="40"
                       v-model="searchInput"
                       :rules="searchInputRules"
                       prepend-icon="search"

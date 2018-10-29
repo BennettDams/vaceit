@@ -3,7 +3,6 @@ import Vuex from "vuex";
 import axios from "axios";
 import format from "date-fns/format";
 import addSeconds from "date-fns/add_seconds";
-// import getMatchDetails from "@/util/getMatchDetails.js";
 
 Vue.use(Vuex);
 
@@ -50,124 +49,112 @@ axios.interceptors.response.use(undefined, function axiosRetryInterceptor(err) {
 export default new Vuex.Store({
   state: {
     player: {},
-    matchesRaw: []
+    matches: []
   },
   getters: {
-    matches: state => {
-      let result = [];
-      result = state.matchesRaw.map((item, index) => {
-        let obj = {};
-
-        obj = {
-          id: index + 1,
-          matchId: item["match_id"],
-          startedAt: dateFromUnix(item["started_at"]),
-          finishedAt: dateFromUnix(item["finished_at"]),
-          competitionName: item["competition_name"],
-          matchUrl: fixFaceitUrl(item["faceit_url"])
-        };
-
-        if (item["matchDetails"]) {
-          obj["matchDetails"] = {
-            score: item["matchDetails"]["round_stats"]["Score"],
-            map: item["matchDetails"]["round_stats"]["Map"]
-          };
-
-          let ownTeam1 = null;
-          let teamNumberOwn = null;
-          let teamNumberEnemy = null;
-          item["matchDetails"]["teams"][0]["players"].forEach(e => {
-            if (e.player_id == state.player.player_id) {
-              ownTeam1 = true;
-            }
-          });
-
-          if (ownTeam1) {
-            teamNumberOwn = 1;
-            teamNumberEnemy = 2;
-          } else {
-            teamNumberOwn = 2;
-            teamNumberEnemy = 1;
-          }
-
-          obj["matchDetails"]["teams"] = {
-            teamOwn: {
-              teamId:
-                item["matchDetails"]["teams"][teamNumberOwn - 1]["team_id"],
-              isWinner:
-                item["matchDetails"]["teams"][teamNumberOwn - 1]["team_stats"][
-                  "Team Win"
-                ] == "1"
-                  ? true
-                  : false,
-              name:
-                item["matchDetails"]["teams"][teamNumberOwn - 1]["team_stats"][
-                  "Team"
-                ],
-              players:
-                item["matchDetails"]["teams"][teamNumberOwn - 1]["players"],
-              premade:
-                item["matchDetails"]["teams"][teamNumberOwn - 1]["premade"],
-              finalScore:
-                item["matchDetails"]["teams"][teamNumberOwn - 1]["team_stats"][
-                  "Final Score"
-                ]
-            },
-            teamEnemy: {
-              teamId:
-                item["matchDetails"]["teams"][teamNumberEnemy - 1]["team_id"],
-              isWinner:
-                item["matchDetails"]["teams"][teamNumberEnemy - 1][
-                  "team_stats"
-                ]["Team Win"] == "1"
-                  ? true
-                  : false,
-              name:
-                item["matchDetails"]["teams"][teamNumberEnemy - 1][
-                  "team_stats"
-                ]["Team"],
-              players:
-                item["matchDetails"]["teams"][teamNumberEnemy - 1]["players"],
-              premade:
-                item["matchDetails"]["teams"][teamNumberEnemy - 1]["premade"],
-              finalScore:
-                item["matchDetails"]["teams"][teamNumberEnemy - 1][
-                  "team_stats"
-                ]["Final Score"]
-            }
-          };
-        }
-        return obj;
-      });
-      return result;
-    },
-    enemies: (state, getters) => {
-      return getters.matches.map((item, index) => ({
-        id: index + 1,
-        ...item
-      }));
-    }
+    // enemies: (state, getters) => {
+    //   return getters.matches.map((item, index) => ({
+    //     id: index + 1,
+    //     ...item
+    //   }));
+    // }
   },
   mutations: {
     UPDATE_PLAYER: (state, payload) => {
       state.player = payload;
     },
-    UPDATE_MATCHES_RAW: (state, payload) => {
-      console.log("MUT: update matches raw");
-      state.matchesRaw = payload;
+    UPDATE_MATCHES: (state, matches) => {
+      console.log("MUT: update matches");
+      matches = matches.map((match, index) => {
+        let obj = {};
+        obj.id = index + 1;
+        obj.matchId = match.match_id;
+        obj.faceitMatchUrl = fixFaceitUrl(match.faceit_url);
+        obj.startedAt = dateFromUnix(match.started_at);
+        obj.finishedAt = dateFromUnix(match.finished_at);
+        obj.gameId = match.game_id;
+        obj.gameMode = match.game_mode;
+        obj.competitionName = match.competition_name;
+        obj.teams = {};
+        obj.teams.teamOwn = {};
+        obj.teams.teamOwn.players = [];
+        obj.teams.teamEnemy = {};
+        obj.teams.teamEnemy.players = [];
+
+        return obj;
+      });
+      state.matches = matches;
     },
     UPDATE_MATCH_DETAILS: (state, payload) => {
       console.log("MUT: update match details");
-      state.matchesRaw = state.matchesRaw.map(e => {
-        if (e.match_id == payload.matchId) {
-          e["matchDetails"] = payload.matchDetails;
+      let matches = state.matches;
+      matches = matches.map(match => {
+        if (match.matchId == payload.matchId) {
+          let ownTeam1 = false;
+          let teamOwn = null;
+          let teamEnemy = null;
+          let roster = null;
+
+          if (payload.matchDetails.teams.faction1["roster"]) {
+            roster = "roster";
+          } else {
+            roster = "roster_v1";
+          }
+
+          payload.matchDetails.teams.faction1[roster].forEach(player => {
+            if (player.player_id == state.player.player_id) {
+              ownTeam1 = true;
+            }
+          });
+
+          if (ownTeam1) {
+            teamOwn = "faction1";
+            teamEnemy = "faction2";
+          } else {
+            teamOwn = "faction2";
+            teamEnemy = "faction1";
+          }
+
+          payload.matchDetails.teams[teamOwn][roster].forEach(player => {
+            match.teams.teamOwn.players.push({
+              playerId: player.player_id,
+              nickname: player.nickname,
+              avatar: player.avatar,
+              steamId: player.game_player_id,
+              steamName: player.game_player_name,
+              faceitLevel: player.game_skill_level
+            });
+          });
+
+          payload.matchDetails.teams[teamEnemy][roster].forEach(player => {
+            match.teams.teamEnemy.players.push({
+              playerId: player.player_id,
+              nickname: player.nickname,
+              avatar: player.avatar,
+              steamId: player.game_player_id,
+              steamName: player.game_player_name,
+              faceitLevel: player.game_skill_level
+            });
+          });
+
+          match.teams.teamOwn.name = payload.matchDetails.teams[teamOwn].name;
+          match.teams.teamEnemy.name =
+            payload.matchDetails.teams[teamEnemy].name;
+
+          if (Array.isArray(payload.matchDetails.voting)) {
+            match.map = payload.matchDetails.voting[0].map.name;
+          } else {
+            match.map = payload.matchDetails.voting.map.pick[0];
+          }
+          match.map = match.map.replace(/"/, "");
         }
-        return e;
+        return match;
       });
+      state.matches = matches;
     }
   },
   actions: {
-    fetchAccountIdByName: ({ commit }, payload) => {
+    fetchAccountIdByName: ({ commit }, nickname) => {
       console.log("ACT: fetching accountId by name");
       let baseUrl = "https://open.faceit.com/data/v4/players";
 
@@ -177,7 +164,7 @@ export default new Vuex.Store({
           Authorization: "Bearer " + process.env.VUE_APP_FACEIT_API_KEY
         },
         params: {
-          nickname: payload,
+          nickname: nickname,
           game: "csgo"
         }
       };
@@ -193,7 +180,8 @@ export default new Vuex.Store({
           console.log(error);
         });
     },
-    fetchMatches: ({ commit, state, dispatch, getters }) => {
+    // fetchMatches: ({ commit, state, dispatch, getters }) => {
+    fetchMatches: ({ commit, state, dispatch }) => {
       console.log("ACT: fetching matches");
       let baseUrl = "https://open.faceit.com/data/v4/players";
 
@@ -215,11 +203,12 @@ export default new Vuex.Store({
       axios
         .get(url, config)
         .then(function(response) {
-          commit("UPDATE_MATCHES_RAW", response.data.items);
-          getters.matches.forEach(e => {
-            dispatch("fetchMatchDetails", e.matchId);
+          commit("UPDATE_MATCHES", response.data.items);
+          state.matches.forEach(match => {
+            setTimeout(function() {
+              dispatch("fetchMatchDetails", match.matchId);
+            }, 1000);
           });
-          // dispatch("fetchMatchDetails");
         })
         .catch(function(error) {
           console.log(error);
@@ -237,12 +226,14 @@ export default new Vuex.Store({
         retry: 8,
         retryDelay: 1000
       };
-      let url = baseUrl + matchId + "/stats";
+      // let url = baseUrl + matchId + "/stats";
+      let url = baseUrl + matchId;
       axios
         .get(url, config)
         .then(function(response) {
           commit("UPDATE_MATCH_DETAILS", {
-            matchDetails: response.data.rounds[0],
+            // matchDetails: response.data.rounds[0],
+            matchDetails: response.data,
             matchId: matchId
           });
         })
@@ -250,32 +241,5 @@ export default new Vuex.Store({
           console.log(error);
         });
     }
-    // fetchMatchDetails: ({ commit, state }) => {
-    //   console.log("ACT: fetching match details");
-    //   let baseUrl = "https://open.faceit.com/data/v4/matches/";
-
-    //   let config = {
-    //     headers: {
-    //       accept: "application/json",
-    //       Authorization: "Bearer " + process.env.VUE_APP_FACEIT_API_KEY
-    //     },
-    //     retry: 8,
-    //     retryDelay: 2000
-    //   };
-    //   state.matchesRaw.forEach(e => {
-    //     let url = baseUrl + e["match_id"] + "/stats";
-    //     axios
-    //       .get(url, config)
-    //       .then(function(response) {
-    //         commit("UPDATE_MATCH_DETAILS", {
-    //           matchDetails: response.data.rounds[0],
-    //           matchId: e["match_id"]
-    //         });
-    //       })
-    //       .catch(function(error) {
-    //         console.log(error);
-    //       });
-    //   });
-    // },
   }
 });

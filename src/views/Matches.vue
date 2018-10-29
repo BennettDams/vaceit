@@ -88,15 +88,16 @@
                 <td class="text-xs-center">{{ props.item.finishedAt }}</td>
                 <td class="text-xs-center">{{ props.item.competitionName }}</td>
                 <td class="text-xs-center">
-                  <span v-if="props.item.matchDetails">
-                    {{ props.item.matchDetails.map }}
+                  <span v-if="props.item.map">
+                    {{ props.item.map }}
                   </span>
                   <span v-else>
-                    //
+                    &mdash;
                   </span>
                 </td>
                 <td class="text-xs-center">
-                  <span v-if="props.item.matchDetails">
+                  <!-- SCORE -->
+                  <!-- <span v-if="props.item.matchDetails">
                     <v-chip :color="winOrLoseColor(props.item.matchDetails.teams.teamOwn.isWinner)"
                             text-color="white"
                             class="my-2 px-3">
@@ -104,14 +105,14 @@
                       &ndash;
                       {{ props.item.matchDetails.teams.teamEnemy.finalScore }}
                     </v-chip>
-                  </span>
-                  <span v-else>
-                    //
-                  </span>
+                  </span> -->
+                  <!-- <span v-else>
+                    &mdash;
+                  </span> -->
                 </td>
                 <td class="text-xs-center">
                   <v-btn color=""
-                         :href="props.item.matchUrl">
+                         :href="props.item.faceitMatchUrl">
                     <v-icon color="orange darken-2">gamepad</v-icon>
                   </v-btn>
                 </td>
@@ -134,19 +135,22 @@
                         <v-toolbar color="secondary"
                                    dark>
                           <v-toolbar-title class="text-xs-center">
-                            {{ props.item.matchDetails.teams.teamOwn.name }}
+                            {{ props.item.teams.teamOwn.name }}
                           </v-toolbar-title>
 
                           <v-spacer></v-spacer>
                         </v-toolbar>
 
                         <v-list subheader>
-                          <v-list-tile v-for="player in props.item.matchDetails.teams.teamOwn.players"
-                                       :key="player.player_id"
+                          <v-list-tile v-for="player in props.item.teams.teamOwn.players"
+                                       :key="player.playerId"
                                        avatar>
-                            <!-- <v-list-tile-avatar>
-                              <img :src="player.avatar">
-                            </v-list-tile-avatar> -->
+
+                            <v-list-tile-avatar class="mr-2"
+                                                size=45>
+                              <img v-if="player.avatar"
+                                   :src="player.avatar">
+                            </v-list-tile-avatar>
 
                             <v-list-tile-content>
                               <v-list-tile-title v-html="player.nickname"></v-list-tile-title>
@@ -160,16 +164,17 @@
                       </v-card>
                     </v-flex>
 
-                    <v-flex xs2 layout
+                    <v-flex xs2
+                            layout
                             align-center
                             justify-center>
-                      <span :class="['display-2', 'text-xs-center', winOrLoseColor(props.item.matchDetails.teams.teamOwn.isWinner) + '--text']">
+                      <!-- <span :class="['display-2', 'text-xs-center', winOrLoseColor(props.item.matchDetails.teams.teamOwn.isWinner) + '--text']">
                         {{ props.item.matchDetails.teams.teamOwn.finalScore }}
                       </span>
                       <span class="display-2 mx-4">&#58;</span>
                       <span :class="['display-2', 'text-xs-center', winOrLoseColor(props.item.matchDetails.teams.teamEnemy.isWinner) + '--text']">
                         {{ props.item.matchDetails.teams.teamEnemy.finalScore }}
-                      </span>
+                      </span> -->
                     </v-flex>
 
                     <v-flex xs5
@@ -181,19 +186,21 @@
                         <v-toolbar color="secondary"
                                    dark>
                           <v-toolbar-title class="text-xs-center">
-                            {{ props.item.matchDetails.teams.teamEnemy.name }}
+                            {{ props.item.teams.teamEnemy.name }}
                           </v-toolbar-title>
 
                           <v-spacer></v-spacer>
                         </v-toolbar>
 
                         <v-list subheader>
-                          <v-list-tile v-for="player in props.item.matchDetails.teams.teamEnemy.players"
-                                       :key="player.player_id"
+                          <v-list-tile v-for="player in props.item.teams.teamEnemy.players"
+                                       :key="player.playerId"
                                        avatar>
-                            <!-- <v-list-tile-avatar>
-                              <img :src="player.avatar">
-                            </v-list-tile-avatar> -->
+                            <v-list-tile-avatar class="mr-2"
+                                                size=45>
+                              <img v-if="player.avatar"
+                                   :src="player.avatar">
+                            </v-list-tile-avatar>
 
                             <v-list-tile-content>
                               <v-list-tile-title v-html="player.nickname"></v-list-tile-title>
@@ -238,7 +245,7 @@
 
 <script>
 import PageHeader from "@/components/PageHeader.vue";
-import { mapState, mapGetters } from "vuex";
+import { mapState } from "vuex";
 export default {
   name: "Matches",
   components: { PageHeader },
@@ -300,13 +307,13 @@ export default {
     };
   },
   mounted() {
-    setTimeout(this.expandFirstRow, 2000);
+    setTimeout(this.expandFirstRow, 3000);
   },
   computed: {
     ...mapState({
-      player: state => state.player
+      player: state => state.player,
+      matches: state => state.matches
     }),
-    ...mapGetters(["matches"]),
     // isLoading() {
     //   let loading = true;
     //   loading = this.matches.every(e => {
