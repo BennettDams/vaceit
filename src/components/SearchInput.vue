@@ -53,7 +53,7 @@ export default {
       this.$router.push("/matches");
     },
     fetchMatches() {
-      this.$store.dispatch("fetchMatches");
+      this.$store.dispatch("fetchMatches", 0);
     }
   }
 };

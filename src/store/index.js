@@ -49,7 +49,8 @@ axios.interceptors.response.use(undefined, function axiosRetryInterceptor(err) {
 export default new Vuex.Store({
   state: {
     player: {},
-    matches: []
+    matches: [],
+    matchesId: 1
   },
   getters: {
     // enemies: (state, getters) => {
@@ -65,9 +66,9 @@ export default new Vuex.Store({
     },
     UPDATE_MATCHES: (state, matches) => {
       console.log("MUT: update matches");
-      matches = matches.map((match, index) => {
+      matches = matches.map(match => {
         let obj = {};
-        obj.id = index + 1;
+        obj.id = state.matchesId++;
         obj.matchId = match.match_id;
         obj.faceitMatchUrl = fixFaceitUrl(match.faceit_url);
         obj.startedAt = dateFromUnix(match.started_at);
@@ -83,7 +84,7 @@ export default new Vuex.Store({
 
         return obj;
       });
-      state.matches = matches;
+      state.matches.push(...matches);
     },
     UPDATE_MATCH_DETAILS: (state, payload) => {
       console.log("MUT: update match details");
@@ -181,7 +182,7 @@ export default new Vuex.Store({
         });
     },
     // fetchMatches: ({ commit, state, dispatch, getters }) => {
-    fetchMatches: ({ commit, state, dispatch }) => {
+    fetchMatches: ({ commit, state, dispatch }, offset) => {
       console.log("ACT: fetching matches");
       let baseUrl = "https://open.faceit.com/data/v4/players";
 
@@ -193,7 +194,7 @@ export default new Vuex.Store({
         params: {
           from: 1293840000,
           game: "csgo",
-          offset: 0,
+          offset: offset,
           limit: 100
         }
       };
@@ -203,12 +204,17 @@ export default new Vuex.Store({
       axios
         .get(url, config)
         .then(function(response) {
-          commit("UPDATE_MATCHES", response.data.items);
-          state.matches.forEach(match => {
-            setTimeout(function() {
+          if (response.data.items.length > 0) {
+            commit("UPDATE_MATCHES", response.data.items);
+            dispatch("fetchMatches", offset + 100);
+          } else if (response.data.items.length == 0) {
+            state.matches.forEach(match => {
+              // setTimeout(function() {
+              //   dispatch("fetchMatchDetails", match.matchId);
+              // }, 1000);
               dispatch("fetchMatchDetails", match.matchId);
-            }, 1000);
-          });
+            });
+          }
         })
         .catch(function(error) {
           console.log(error);
@@ -223,8 +229,8 @@ export default new Vuex.Store({
           accept: "application/json",
           Authorization: "Bearer " + process.env.VUE_APP_FACEIT_API_KEY
         },
-        retry: 8,
-        retryDelay: 1000
+        retry: 4,
+        retryDelay: 2000
       };
       // let url = baseUrl + matchId + "/stats";
       let url = baseUrl + matchId;
