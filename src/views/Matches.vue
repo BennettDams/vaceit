@@ -307,7 +307,7 @@ export default {
     };
   },
   mounted() {
-    setTimeout(this.expandFirstRow, 3000);
+    setTimeout(this.expandFirstRow, 5000);
   },
   computed: {
     ...mapState({
