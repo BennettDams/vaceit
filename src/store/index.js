@@ -6,9 +6,9 @@ import addSeconds from "date-fns/add_seconds";
 
 Vue.use(Vuex);
 
-// function fixFaceitUrl(url) {
-//   return url.replace("{lang}", "en");
-// }
+function fixFaceitUrl(url) {
+  return url.replace("{lang}", "en");
+}
 
 function dateFromUnix(value) {
   if (!value) return "";
@@ -50,56 +50,37 @@ export default new Vuex.Store({
   state: {
     player: {},
     matches: [],
-    matchesId: 1,
-    enemiesAll: []
+    matchesId: 1
   },
   getters: {
-    enemies: state => {
-      return state.enemiesAll.map((item, index) => ({
-        id: index + 1,
-        ...item
-      }));
-    },
-    amountBannedEnemies: state => {
-      let amountBans = 0;
-      if (state.enemies) {
-        state.enemies.forEach(enemy => {
-          if (enemy.bans.length > 0) amountBans++;
-        });
-      }
-      return amountBans;
-    }
+    // enemies: (state, getters) => {
+    //   return getters.matches.map((item, index) => ({
+    //     id: index + 1,
+    //     ...item
+    //   }));
+    // }
   },
   mutations: {
-    UPDATE_USER: (state, payload) => {
+    UPDATE_PLAYER: (state, payload) => {
       state.player = payload;
-    },
-    UPDATE_ENEMIES: (state, player) => {
-      console.log("MUT: update enemiesAll");
-      if (!state.enemiesAll.includes(player.player_id)) {
-        state.enemiesAll.push(player);
-      }
     },
     UPDATE_MATCHES: (state, matches) => {
       console.log("MUT: update matches");
       matches = matches.map(match => {
         let obj = {};
         obj.id = state.matchesId++;
-        obj.matchId = match.matchId;
-        // obj.faceitMatchUrl = fixFaceitUrl(match.faceit_url);
-        obj.startedAt = dateFromUnix(match.created_at);
-        obj.finishedAt = dateFromUnix(match.updated_at);
-        obj.gameId = match.game;
-        obj.gameMode = match.gameMode;
-        // obj.competitionName = match.competition_name;
+        obj.matchId = match.match_id;
+        obj.faceitMatchUrl = fixFaceitUrl(match.faceit_url);
+        obj.startedAt = dateFromUnix(match.started_at);
+        obj.finishedAt = dateFromUnix(match.finished_at);
+        obj.gameId = match.game_id;
+        obj.gameMode = match.game_mode;
+        obj.competitionName = match.competition_name;
         obj.teams = {};
         obj.teams.teamOwn = {};
         obj.teams.teamOwn.players = [];
         obj.teams.teamEnemy = {};
         obj.teams.teamEnemy.players = [];
-        obj.teamId = match.teamId;
-        obj.map = match.i1;
-        obj.score = match.i18;
 
         return obj;
       });
@@ -107,105 +88,74 @@ export default new Vuex.Store({
     },
     UPDATE_MATCH_DETAILS: (state, payload) => {
       console.log("MUT: update match details");
+      let matches = state.matches;
+      matches = matches.map(match => {
+        if (match.matchId == payload.matchId) {
+          let ownTeam1 = false;
+          let teamOwn = null;
+          let teamEnemy = null;
+          let roster = null;
 
-      let index = state.matches
-        .map(function(e) {
-          return e.matchId;
-        })
-        .indexOf(payload.matchId);
-
-      let match = state.matches[index];
-
-      if (match.matchId == payload.matchId) {
-        let ownTeam1 = false;
-        let teamOwn = null;
-        let teamEnemy = null;
-        // let roster = null;
-
-        // if (payload.matchDetails.teams.faction1["roster"]) {
-        //   roster = "roster";
-        // } else {
-        //   roster = "roster_v1";
-        // }
-
-        // payload.matchDetails.teams.faction1[roster].forEach(player => {
-        //   if (player.player_id == state.player.player_id) {
-        //     ownTeam1 = true;
-        //   }
-        // });
-
-        payload.matchDetails.faction1.forEach(player => {
-          if (player.guid == state.player.player_id) {
-            ownTeam1 = true;
+          if (payload.matchDetails.teams.faction1["roster"]) {
+            roster = "roster";
+          } else {
+            roster = "roster_v1";
           }
-        });
 
-        if (ownTeam1) {
-          teamOwn = "faction1";
-          teamEnemy = "faction2";
-        } else {
-          teamOwn = "faction2";
-          teamEnemy = "faction1";
+          payload.matchDetails.teams.faction1[roster].forEach(player => {
+            if (player.player_id == state.player.player_id) {
+              ownTeam1 = true;
+            }
+          });
+
+          if (ownTeam1) {
+            teamOwn = "faction1";
+            teamEnemy = "faction2";
+          } else {
+            teamOwn = "faction2";
+            teamEnemy = "faction1";
+          }
+
+          payload.matchDetails.teams[teamOwn][roster].forEach(player => {
+            match.teams.teamOwn.players.push({
+              playerId: player.player_id,
+              nickname: player.nickname,
+              avatar: player.avatar,
+              steamId: player.game_player_id,
+              steamName: player.game_player_name,
+              faceitLevel: player.game_skill_level
+            });
+          });
+
+          payload.matchDetails.teams[teamEnemy][roster].forEach(player => {
+            match.teams.teamEnemy.players.push({
+              playerId: player.player_id,
+              nickname: player.nickname,
+              avatar: player.avatar,
+              steamId: player.game_player_id,
+              steamName: player.game_player_name,
+              faceitLevel: player.game_skill_level
+            });
+          });
+
+          match.teams.teamOwn.name = payload.matchDetails.teams[teamOwn].name;
+          match.teams.teamEnemy.name =
+            payload.matchDetails.teams[teamEnemy].name;
+
+          if (Array.isArray(payload.matchDetails.voting)) {
+            match.map = payload.matchDetails.voting[0].map.name;
+          } else {
+            match.map = payload.matchDetails.voting.map.pick[0];
+          }
+          match.map = match.map.replace(/"/, "");
         }
-
-        payload.matchDetails.teams[teamOwn].forEach(player => {
-          match.teams.teamOwn.players.push({
-            playerId: player.guid,
-            nickname: player.nickname,
-            avatar: player.avatar,
-            steamId: player.csgo_id,
-            steamName: player.steam_nickname,
-            faceitLevel: player.csgo_skill_level_label
-          });
-        });
-
-        payload.matchDetails.teams[teamEnemy].forEach(player => {
-          match.teams.teamOwn.players.push({
-            playerId: player.guid,
-            nickname: player.nickname,
-            avatar: player.avatar,
-            steamId: player.csgo_id,
-            steamName: player.steam_nickname,
-            faceitLevel: player.csgo_skill_level_label
-          });
-        });
-
-        match.teams.teamOwn.name = payload.matchDetails[teamOwn + "_nickname"];
-        match.teams.teamEnemy.name =
-          payload.matchDetails[teamEnemy + "_nickname"];
-
-        match.gameMode2 = payload.matchDetails.match_type_label;
-
-        match.startedAt2 = payload.matchDetails.startedAt.substring(0, 11);
-      }
-
-      state.matches[index] = match;
+        return match;
+      });
+      state.matches = matches;
     }
   },
   actions: {
-    fetchPlayerByAccountId: ({ commit }, accountId) => {
-      console.log("ACT: fetching player by account id");
-      let baseUrl = "https://api.faceit.com/core/v1/users";
-
-      let config = {
-        headers: {
-          accept: "application/json",
-          Authorization: "Bearer " + process.env.VUE_APP_FACEIT_API_KEY
-        }
-      };
-
-      let url = baseUrl + "/" + accountId;
-
-      axios
-        .get(url, config)
-        .then(function(response) {
-          commit("UPDATE_ENEMIES", response.data);
-        })
-        .catch(function(error) {
-          console.log(error);
-        });
-    },
-    fetchUserByName: ({ commit }, nickname) => {
+    fetchAccountIdByName: ({ commit }, nickname) => {
       console.log("ACT: fetching accountId by name");
       let baseUrl = "https://open.faceit.com/data/v4/players";
 
@@ -225,28 +175,44 @@ export default new Vuex.Store({
       axios
         .get(url, config)
         .then(function(response) {
-          commit("UPDATE_USER", response.data);
+          commit("UPDATE_PLAYER", response.data);
         })
         .catch(function(error) {
           console.log(error);
         });
     },
-    fetchMatches: ({ commit, state, dispatch }) => {
+    // fetchMatches: ({ commit, state, dispatch, getters }) => {
+    fetchMatches: ({ commit, state, dispatch }, offset) => {
       console.log("ACT: fetching matches");
-      let baseUrl = "https://api.faceit.com/stats/api/v1/stats/time/users";
+      let baseUrl = "https://open.faceit.com/data/v4/players";
 
-      let url =
-        baseUrl + "/" + state.player.player_id + "/games/csgo?size=1000";
+      let config = {
+        headers: {
+          accept: "application/json",
+          Authorization: "Bearer " + process.env.VUE_APP_FACEIT_API_KEY
+        },
+        params: {
+          from: 1293840000,
+          game: "csgo",
+          offset: offset,
+          limit: 100
+        }
+      };
+
+      let url = baseUrl + "/" + state.player.player_id + "/history";
 
       axios
-        .get(`${"https://cors-anywhere.herokuapp.com/"}` + url)
+        .get(url, config)
         .then(function(response) {
-          commit("UPDATE_MATCHES", response.data);
-          if (response.data.length > 0) {
+          if (response.data.items.length > 0) {
+            commit("UPDATE_MATCHES", response.data.items);
+            dispatch("fetchMatches", offset + 100);
+          } else if (response.data.items.length == 0) {
             state.matches.forEach(match => {
-              if (match.id < 4) {
-                dispatch("fetchMatchDetails", match.matchId);
-              }
+              // setTimeout(function() {
+              //   dispatch("fetchMatchDetails", match.matchId);
+              // }, 1000);
+              dispatch("fetchMatchDetails", match.matchId);
             });
           }
         })
@@ -256,29 +222,24 @@ export default new Vuex.Store({
     },
     fetchMatchDetails: ({ commit }, matchId) => {
       console.log("ACT: fetching match details");
-      // let baseUrl = "https://api.faceit.com/match/v1/match";
-      let baseUrl = "https://api.faceit.com/core/v1/matches";
+      let baseUrl = "https://open.faceit.com/data/v4/matches/";
 
       let config = {
         headers: {
           accept: "application/json",
           Authorization: "Bearer " + process.env.VUE_APP_FACEIT_API_KEY
         },
-        params: {
-          withStats: true
-        },
-        retry: 5,
-        retryDelay: 3000
+        retry: 4,
+        retryDelay: 2000
       };
-
-      let url = baseUrl + "/" + matchId;
-
+      // let url = baseUrl + matchId + "/stats";
+      let url = baseUrl + matchId;
       axios
-        // .get(`${"https://cors-anywhere.herokuapp.com/"}` + url, config)
         .get(url, config)
         .then(function(response) {
           commit("UPDATE_MATCH_DETAILS", {
-            matchDetails: response.data.payload,
+            // matchDetails: response.data.rounds[0],
+            matchDetails: response.data,
             matchId: matchId
           });
         })
