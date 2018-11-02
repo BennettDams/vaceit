@@ -37,52 +37,83 @@
                     <div class="secondary--text headline my-2">{{ player.nickname }}</div>
                     <v-divider light
                                class="my-2"></v-divider>
-                    <div>{{ enemies.length }} ENEMIES</div>
+                    <div>{{ matches.length }} MATCHES</div>
                     <div>ELO: {{ player.games.csgo.faceit_elo }}</div>
                     <div>SKILL LEVEL: {{ player.games.csgo.skill_level }}</div>
                   </div>
                 </v-card-title>
               </v-flex>
+
+              <v-flex xs7
+                      align-center
+                      justify-center
+                      layout>
+                <h1 class="mr-3 font-weight-light">LEVEL</h1>
+                <v-progress-circular class="text-xs-center"
+                                     :rotate="-90"
+                                     :size="100"
+                                     :width="15"
+                                     :value="player.games.csgo.skill_level * 10"
+                                     :color="faceitLevelColor">
+                  <h1>{{ player.games.csgo.skill_level }}</h1>
+                </v-progress-circular>
+              </v-flex>
+
             </v-layout>
           </v-card>
         </v-flex>
 
       </v-layout>
 
-      <v-layout row
-                wrap>
-        <v-flex xs12>
+      <v-layout align-center>
+        <v-card id="card-grid">
+          <v-container fluid
+                       grid-list-md>
+            <v-layout row
+                      wrap>
+              <v-flex xs2
+                      v-for="enemy in enemies"
+                      :key="enemy.playerId"
+                      class="mx-3 my-2">
 
-          <v-data-table ref="dTable"
-                        :headers="headers"
-                        :items="enemies"
-                        hide-actions
-                        item-key="id"
-                        :pagination.sync="pagination"
-                        expand>
-            <template slot="items"
-                      slot-scope="props">
-              <tr @click="props.expanded = !props.expanded">
-                <td class="text-xs-center">{{ props.item.id }}</td>
-                <td class="text-xs-center">{{ props.item.teams.team1.nickname }}</td>
-                <td class="text-xs-center">{{ props.item.teams.team1.nickname }}</td>
-              </tr>
-            </template>
-            <template slot="expand"
-                      slot-scope="props">
-              <v-card flat>
-                <v-card-text>Peek-a-boo!</v-card-text>
-              </v-card>
-            </template>
-          </v-data-table>
+                <v-card>
+                  <v-img :src="enemy.avatar"
+                         aspect-ratio="1">
 
-          <!-- PAGINATION -->
-          <div class="text-xs-center pt-2">
-            <v-pagination v-model="pagination.page"
-                          :length="pages"></v-pagination>
-          </div>
+                    <v-container fill-height
+                                 fluid
+                                 pa-2>
+                      <v-layout fill-height>
+                        <v-flex xs12
+                                align-end
+                                flexbox>
+                        </v-flex>
+                      </v-layout>
+                    </v-container>
+                  </v-img>
 
-        </v-flex>
+                  <v-flex xs4>
+                    <v-card-title primary-title class="py-1">
+                      <div>
+                        <h3 class="text-truncaste mb-0">{{ enemy.nickname }}</h3>
+                        <div>enemy</div>
+                      </div>
+                    </v-card-title>
+                  </v-flex>
+
+                  <!-- <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn icon>
+                      <v-icon>favorite</v-icon>
+                    </v-btn>
+                  </v-card-actions> -->
+
+                </v-card>
+
+              </v-flex>
+            </v-layout>
+          </v-container>
+        </v-card>
       </v-layout>
 
     </div>
@@ -106,51 +137,31 @@ export default {
   name: "Bans",
   components: { PageHeader },
   data() {
-    return {
-      pagination: {
-        page: 1,
-        rowsPerPage: 70,
-        // sortBy: "date",
-        descending: false
-      },
-      headers: [
-        {
-          text: "#",
-          align: "center",
-          // sortable: true,
-          value: "id"
-        },
-        {
-          text: "FACTION 1",
-          align: "center",
-          // sortable: true,
-          value: "faction1"
-        },
-        {
-          text: "FACTION 2",
-          align: "center",
-          // sortable: true,
-          value: "faction2"
-        }
-      ]
-    };
+    return {};
   },
   computed: {
     ...mapState({
-      player: state => state.player
+      player: state => state.player,
+      matches: state => state.matches
     }),
     ...mapGetters(["enemies"]),
-    pages() {
-      if (
-        this.pagination.rowsPerPage == null ||
-        this.pagination.totalItems == null
-      )
-        return 0;
-
-      return Math.ceil(
-        this.pagination.totalItems / this.pagination.rowsPerPage
-      );
+    faceitLevelColor() {
+      let color;
+      let level = this.player.games.csgo.skill_level;
+      if (level <= 4) {
+        color = "success";
+      } else if (level <= 7) {
+        color = "info";
+      } else if (level <= 9) {
+        color = "primary";
+      } else {
+        color = "red";
+      }
+      return color;
     }
   }
 };
 </script>
+
+<style lang="scss" src="@/styles/Bans.scss">
+</style>
