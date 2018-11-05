@@ -3,26 +3,6 @@
 
         <PageHeader title="BANS &amp; ENEMIES"></PageHeader>
 
-        <v-layout align-center>
-            <v-flex xs12>
-                <v-progress-circular v-if="isFetchingBans"
-                                     :size="120"
-                                     :width="7"
-                                     color="secondary"
-                                     indeterminate>
-                </v-progress-circular>
-                <v-layout v-else
-                          justify-space-around
-                          class="mb-2">
-                    <span class="group pa-2">
-                        <v-icon color="success">check_circle</v-icon>
-                        <p>ALL BANS LOADED :)</p>
-                    </span>
-
-                </v-layout>
-            </v-flex>
-        </v-layout>
-
         <div v-if="enemiesChunked.length > 0">
 
             <v-layout row
@@ -36,7 +16,7 @@
 
                             <v-flex xs12
                                     sm6
-                                    md8
+                                    md12
                                     align-center
                                     justify-center
                                     layout
@@ -84,6 +64,68 @@
                 </v-flex>
 
             </v-layout>
+
+            <h1 class="display-1 my-5">BANNED ENEMIES</h1>
+
+            <v-layout v-if="enemiesWithBans.length > 0"
+                      align-center>
+                <v-card id="card-grid">
+                    <v-container fluid
+                                 grid-list-md>
+                        <v-layout row
+                                  wrap>
+                            <v-flex xs2
+                                    v-for="enemy in enemiesWithBans"
+                                    :key="enemy.playerId"
+                                    class="mx-3 my-2">
+
+                                <v-card>
+                                    <v-img :src="enemy.avatar"
+                                           aspect-ratio="1">
+
+                                        <v-container fill-height
+                                                     fluid
+                                                     pa-2>
+                                            <v-layout fill-height>
+                                                <v-flex xs12
+                                                        align-end
+                                                        flexbox>
+                                                </v-flex>
+                                            </v-layout>
+                                        </v-container>
+                                    </v-img>
+
+                                    <v-flex xs4>
+                                        <v-card-title primary-title
+                                                      class="py-1">
+                                            <div>
+                                                <h3 class="text-truncaste mb-0">{{ enemy.nickname }}</h3>
+                                                <div>enemy</div>
+                                            </div>
+                                        </v-card-title>
+                                    </v-flex>
+
+                                    <!-- <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn icon>
+                      <v-icon>favorite</v-icon>
+                    </v-btn>
+                  </v-card-actions> -->
+
+                                </v-card>
+
+                            </v-flex>
+                        </v-layout>
+                    </v-container>
+                </v-card>
+            </v-layout>
+
+            <v-layout v-else
+                      align-center>
+                <h1 class="display-1">NO BANS</h1>
+            </v-layout>
+
+            <h1 class="display-1 my-5">ALL ENEMIES</h1>
 
             <v-layout align-center>
                 <v-card id="card-grid">
@@ -181,7 +223,7 @@ export default {
       matches: state => state.matches,
       isFetchingBans: state => state.isFetchingBans
     }),
-    ...mapGetters(["enemies"]),
+    ...mapGetters(["enemies", "enemiesWithBans"]),
     faceitLevelColor() {
       let color;
       let level = this.user.games.csgo.skill_level;
