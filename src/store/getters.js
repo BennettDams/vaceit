@@ -13,5 +13,12 @@ export default {
         index === self.findIndex(e => e.playerId === enemy.playerId)
     );
     return enemies;
+  },
+  enemiesWithBans: (state, getters) => {
+    let enemiesWithBans = [];
+    enemiesWithBans = getters.enemies.filter(enemy => {
+      return state.bans.some(ban => ban.playerId == enemy.playerId);
+    });
+    return enemiesWithBans;
   }
 };

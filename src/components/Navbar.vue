@@ -30,8 +30,8 @@
              flat>
         <v-icon>search</v-icon>
       </v-btn>
-      <v-btn to="/bans"
-             flat>BANS</v-btn>
+      <v-btn to="/bans-and-enemies"
+             flat>BANS &amp; ENEMIES</v-btn>
       <v-btn to="/matches"
              flat>MATCHES</v-btn>
       <v-btn to="/about"

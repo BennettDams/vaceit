@@ -16,6 +16,26 @@ export default {
   UPDATE_USER: (state, user) => {
     state.user = user;
   },
+  UPDATE_IS_FETCHING_BANS: (state, status) => {
+    state.isFetchingBans = status;
+  },
+  UPDATE_BANS: (state, bans) => {
+    console.log("MUT: update bans");
+    let bansTemp = bans.map(ban => {
+      let obj = {};
+      obj.id = state.bansId++;
+      obj.banId = ban._id;
+      obj.playerId = ban.user_id;
+      obj.nickname = ban.nickname;
+      obj.type = ban.type;
+      obj.reasonType = ban.reason_type;
+      obj.reason = ban.reason;
+      obj.startsAt = ban.starts_at;
+
+      return obj;
+    });
+    state.bans.push(...bansTemp);
+  },
   UPDATE_MATCHES: (state, matches) => {
     console.log("MUT: update matches");
     let matchesTemp = matches.map(match => {
@@ -38,15 +58,11 @@ export default {
       let teamOwn = null;
       let teamEnemy = null;
 
-      // match.teams.faction1.players.forEach(player => {
-      //   if (player.player_id == state.player.player_id) {
-      //     ownTeam1 = true;
-      //   }
-      // });
-
-      ownTeam1 = match.teams.faction1.players.some(
-        player => player.playerId == state.user.player_id
-      );
+      match.teams.faction1.players.forEach(player => {
+        if (player.player_id == state.user.player_id) {
+          ownTeam1 = true;
+        }
+      });
 
       if (ownTeam1) {
         teamOwn = "faction1";

@@ -2,29 +2,29 @@ import axios from "axios";
 
 axios.interceptors.response.use(undefined, function axiosRetryInterceptor(err) {
   var config = err.config;
-  // If config does not exist or the retry option is not set, reject
+  // if config does not exist or the retry option is not set, reject
   if (!config || !config.retry) return Promise.reject(err);
 
-  // Set the variable for keeping track of the retry count
+  // set the variable for keeping track of the retry count
   config.__retryCount = config.__retryCount || 0;
 
-  // Check if we've maxed out the total number of retries
+  // check if total number of retries is maxed out
   if (config.__retryCount >= config.retry) {
-    // Reject with the error
+    // reject with the error
     return Promise.reject(err);
   }
 
-  // Increase the retry count
+  // increase the retry count
   config.__retryCount += 1;
 
-  // Create new promise to handle exponential backoff
+  // create new promise to handle exponential backoff
   var backoff = new Promise(function(resolve) {
     setTimeout(function() {
       resolve();
     }, config.retryDelay || 1);
   });
 
-  // Return the promise in which recalls axios to retry the request
+  // return the promise in which recalls axios to retry the request
   return backoff.then(function() {
     return axios(config);
   });
@@ -57,58 +57,32 @@ export default {
         console.log(error);
       });
   },
-  fetchEnemyDetailsById: ({ state }) => {
-    console.log("ACT: fetching enemy details by ID");
-    let baseUrl = "https://open.faceit.com/data/v4/players/";
+  fetchEnemyDetailsById: ({ commit, getters }) => {
+    console.log("ACT: fetching enemy details by id");
+    let baseUrl = "https://open.faceit.com/data/v4/players";
 
     let config = {
       headers: {
         accept: "application/json",
         Authorization: "Bearer " + process.env.VUE_APP_FACEIT_API_KEY
-      }
+      },
+      retry: 12,
+      retryDelay: 2000
     };
 
-    let responses = [];
+    getters.enemies.forEach(enemy => {
+      let url = baseUrl + "/" + enemy.playerId;
 
-    state.matches.forEach(match => {
-      match.teams.teamEnemy.forEach(enemy => {
-        let url = baseUrl + enemy.playerId;
-        axios
-          .get(url, config)
-          .then(function(response) {
-            responses.push(response);
-          })
-          .catch(function(error) {
-            console.log(error);
-          });
-      });
+      axios
+        .get(url, config)
+        .then(function(response) {
+          commit("TEST", response.data);
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
     });
-    console.log("responses:", responses);
-
-    // commit("UPDATE_MATCHES_PLAYER_DETAILS", response.data);
   },
-  // fetchEnemyDetailsById: ({ commit }, accountId) => {
-  //   console.log("ACT: fetching enemy details by ID");
-  //   let baseUrl = "https://open.faceit.com/data/v4/players";
-
-  //   let config = {
-  //     headers: {
-  //       accept: "application/json",
-  //       Authorization: "Bearer " + process.env.VUE_APP_FACEIT_API_KEY
-  //     }
-  //   };
-
-  //   let url = baseUrl + "/" + accountId;
-
-  //   axios
-  //     .get(url, config)
-  //     .then(function(response) {
-  //       commit("UPDATE_MATCHES_PLAYER_DETAILS", response.data);
-  //     })
-  //     .catch(function(error) {
-  //       console.log(error);
-  //     });
-  // },
   fetchMatches: ({ commit, state, dispatch }, offset) => {
     console.log("ACT: fetching matches");
     let baseUrl = "https://open.faceit.com/data/v4/players";
@@ -134,7 +108,45 @@ export default {
         if (response.data.items.length > 0) {
           commit("UPDATE_MATCHES", response.data.items);
           dispatch("fetchMatches", offset + 100);
-          // dispatch("fetchEnemyDetailsById");
+        }
+        // } else {
+        //   dispatch("fetchEnemyDetailsById");
+        // }
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
+  },
+  fetchBans: ({ commit, dispatch }, offset) => {
+    console.log("ACT: fetching bans");
+    let baseUrl = "https://api.faceit.com/core/v1/bans";
+
+    let config = {
+      // headers: {
+      //   accept: "application/json",
+      //   Authorization: "Bearer " + process.env.VUE_APP_FACEIT_API_KEY
+      // },
+      params: {
+        limit: 100,
+        offset: offset
+      }
+    };
+
+    let url = baseUrl;
+
+    axios
+      .get(url, config)
+      .then(function(response) {
+        dispatch("setIsFetchingBans", true);
+        if (
+          response.data &&
+          response.data.payload &&
+          response.data.payload.length > 0
+        ) {
+          commit("UPDATE_BANS", response.data.payload);
+          dispatch("fetchBans", offset + 100);
+        } else {
+          dispatch("setIsFetchingBans", false);
         }
       })
       .catch(function(error) {
@@ -167,5 +179,8 @@ export default {
       .catch(function(error) {
         console.log(error);
       });
+  },
+  setIsFetchingBans: ({ commit }, status) => {
+    commit("UPDATE_IS_FETCHING_BANS", status);
   }
 };

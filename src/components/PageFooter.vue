@@ -12,7 +12,7 @@
                     <v-icon class="red--text">favorite</v-icon>
                     by
                     <a class="white--text"
-                       href="https://twitter.com/BennettDams"
+                       href="https://github.com/bennettdams/vaceit"
                        target="_blank">
                         Bennett Dams
                     </a>

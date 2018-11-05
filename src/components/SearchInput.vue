@@ -1,33 +1,37 @@
 <template>
-  <v-form @submit.prevent>
-    <v-layout row
-              align-center
-              justify-center
-              layout>
+  <div id="search-input">
 
-      <v-flex sm11>
+    <v-form @submit.prevent>
+      <v-layout row
+                align-center
+                justify-center
+                layout>
 
-        <v-text-field @keyup.enter.native="onInputEnter()"
-                      class="font-weight-thin display-1"
-                      height="40"
-                      v-model="searchInput"
-                      :rules="searchInputRules"
-                      prepend-icon="search"
-                      clearable
-                      hint="FACEIT username or account URL"
-                      required>
-        </v-text-field>
-      </v-flex>
+        <v-flex sm11>
 
-      <v-flex sm1
-              class="pl-3">
+          <v-text-field @keyup.enter.native="onInputEnter()"
+                        class="font-weight-thin display-1"
+                        height="40"
+                        v-model="searchInput"
+                        :rules="searchInputRules"
+                        prepend-icon="search"
+                        clearable
+                        hint="FACEIT username or account URL"
+                        required>
+          </v-text-field>
+        </v-flex>
 
-        <InfoDialog></InfoDialog>
+        <v-flex sm1
+                class="pl-3">
 
-      </v-flex>
+          <InfoDialog></InfoDialog>
 
-    </v-layout>
-  </v-form>
+        </v-flex>
+
+      </v-layout>
+    </v-form>
+
+  </div>
 </template>
 
 <script>
@@ -50,10 +54,13 @@ export default {
     onInputEnter() {
       this.$store.dispatch("fetchAccountIdByName", this.searchInput);
       setTimeout(this.fetchMatches, 1000);
-      this.$router.push("/matches");
+      setTimeout(this.fetchBans, 1000);
     },
     fetchMatches() {
       this.$store.dispatch("fetchMatches", 0);
+    },
+    fetchBans() {
+      this.$store.dispatch("fetchBans", 0);
     }
   }
 };

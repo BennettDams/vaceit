@@ -2,7 +2,7 @@ import Vue from "vue";
 import Router from "vue-router";
 import Home from "./views/Home.vue";
 import About from "./views/About.vue";
-import Bans from "./views/Bans.vue";
+import BansAndEnemies from "./views/BansAndEnemies.vue";
 import Matches from "./views/Matches.vue";
 
 Vue.use(Router);
@@ -29,9 +29,9 @@ export default new Router({
       component: About
     },
     {
-      path: "/bans",
-      name: "bans",
-      component: Bans
+      path: "/bans-and-enemies",
+      name: "bans-and-enemies",
+      component: BansAndEnemies
     },
     {
       path: "/matches",
