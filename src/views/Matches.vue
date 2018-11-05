@@ -3,12 +3,6 @@
 
     <PageHeader title="MATCHES"></PageHeader>
 
-    <!-- <v-progress-linear v-if="player.player_id && isLoading"
-                       color="secondary"
-                       height="13"
-                       :indeterminate="true">
-    </v-progress-linear> -->
-
     <div v-if="matches.length > 0">
       <v-layout row
                 wrap
@@ -28,8 +22,8 @@
                       text-xs-center
                       class="py-3">
                 <v-avatar size=120>
-                  <v-img :src="player.avatar"
-                         :lazy-src="player.avatar"
+                  <v-img :src="user.avatar"
+                         :lazy-src="user.avatar"
                          aspect-ratio="1"
                          class="grey lighten-2">
                   </v-img>
@@ -39,12 +33,12 @@
               <v-flex xs7>
                 <v-card-title primary-title>
                   <div>
-                    <div class="secondary--text headline my-2">{{ player.nickname }}</div>
+                    <div class="secondary--text headline my-2">{{ user.nickname }}</div>
                     <v-divider light
                                class="my-2"></v-divider>
                     <div>{{ matches.length }} MATCHES</div>
-                    <div>ELO: {{ player.games.csgo.faceit_elo }}</div>
-                    <div>SKILL LEVEL: {{ player.games.csgo.skill_level }}</div>
+                    <div>ELO: {{ user.games.csgo.faceit_elo }}</div>
+                    <div>SKILL LEVEL: {{ user.games.csgo.skill_level }}</div>
                   </div>
                 </v-card-title>
               </v-flex>
@@ -58,9 +52,9 @@
                                      :rotate="-90"
                                      :size="100"
                                      :width="15"
-                                     :value="player.games.csgo.skill_level * 10"
+                                     :value="user.games.csgo.skill_level * 10"
                                      :color="faceitLevelColor">
-                  <h1>{{ player.games.csgo.skill_level }}</h1>
+                  <h1>{{ user.games.csgo.skill_level }}</h1>
                 </v-progress-circular>
               </v-flex>
 
@@ -231,7 +225,7 @@
 
     </div>
 
-    <v-alert v-else-if="!player.player_id"
+    <v-alert v-else-if="!user.player_id"
              :value="true"
              color="secondary"
              type="info">
@@ -311,7 +305,7 @@ export default {
   },
   computed: {
     ...mapState({
-      player: state => state.player,
+      user: state => state.user,
       matches: state => state.matches
     }),
     // isLoading() {
@@ -323,7 +317,7 @@ export default {
     // },
     faceitLevelColor() {
       let color;
-      let level = this.player.games.csgo.skill_level;
+      let level = this.user.games.csgo.skill_level;
       if (level <= 4) {
         color = "success";
       } else if (level <= 7) {

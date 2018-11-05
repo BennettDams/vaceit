@@ -13,8 +13,8 @@ function dateFromUnix(value) {
 
 // export const mutations = {
 export default {
-  UPDATE_PLAYER: (state, payload) => {
-    state.player = payload;
+  UPDATE_USER: (state, user) => {
+    state.user = user;
   },
   UPDATE_MATCHES: (state, matches) => {
     console.log("MUT: update matches");
@@ -38,11 +38,15 @@ export default {
       let teamOwn = null;
       let teamEnemy = null;
 
-      match.teams.faction1.players.forEach(player => {
-        if (player.player_id == state.player.player_id) {
-          ownTeam1 = true;
-        }
-      });
+      // match.teams.faction1.players.forEach(player => {
+      //   if (player.player_id == state.player.player_id) {
+      //     ownTeam1 = true;
+      //   }
+      // });
+
+      ownTeam1 = match.teams.faction1.players.some(
+        player => player.playerId == state.user.player_id
+      );
 
       if (ownTeam1) {
         teamOwn = "faction1";
@@ -83,15 +87,26 @@ export default {
     });
     state.matches.push(...matchesTemp);
   },
-  UPDATE_MATCH_DETAILS: (state, payload) => {
-    console.log("MUT: update match details");
-    let matches = state.matches;
-    matches = matches.map(match => {
-      if (match.matchId == payload.matchId) {
-        match.test = "test";
-      }
-      return match;
+  UPDATE_MATCHES_PLAYER_DETAILS: (state, playerDetails) => {
+    state.matches.forEach(match => {
+      match.teams.teamEnemy.players.map(enemy => {
+        if (enemy.playerId == playerDetails.player_id) {
+          enemy.country = playerDetails.country;
+          enemy.bans = playerDetails.bans;
+        }
+        return enemy;
+      });
     });
-    state.matches = matches;
   }
+  // UPDATE_MATCH_DETAILS: (state, payload) => {
+  //   console.log("MUT: update match details");
+  //   let matches = state.matches;
+  //   matches = matches.map(match => {
+  //     if (match.matchId == payload.matchId) {
+  //       match.test = "test";
+  //     }
+  //     return match;
+  //   });
+  //   state.matches = matches;
+  // },
 };

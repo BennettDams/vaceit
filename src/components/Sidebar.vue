@@ -34,7 +34,7 @@ export default {
   },
   computed: {
     ...mapState({
-      player: state => state.player
+      user: state => state.user
     })
     // ...mapGetters("cart", {
     //   products: "cartProducts",

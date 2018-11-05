@@ -51,12 +51,64 @@ export default {
     axios
       .get(url, config)
       .then(function(response) {
-        commit("UPDATE_PLAYER", response.data);
+        commit("UPDATE_USER", response.data);
       })
       .catch(function(error) {
         console.log(error);
       });
   },
+  fetchEnemyDetailsById: ({ state }) => {
+    console.log("ACT: fetching enemy details by ID");
+    let baseUrl = "https://open.faceit.com/data/v4/players/";
+
+    let config = {
+      headers: {
+        accept: "application/json",
+        Authorization: "Bearer " + process.env.VUE_APP_FACEIT_API_KEY
+      }
+    };
+
+    let responses = [];
+
+    state.matches.forEach(match => {
+      match.teams.teamEnemy.forEach(enemy => {
+        let url = baseUrl + enemy.playerId;
+        axios
+          .get(url, config)
+          .then(function(response) {
+            responses.push(response);
+          })
+          .catch(function(error) {
+            console.log(error);
+          });
+      });
+    });
+    console.log("responses:", responses);
+
+    // commit("UPDATE_MATCHES_PLAYER_DETAILS", response.data);
+  },
+  // fetchEnemyDetailsById: ({ commit }, accountId) => {
+  //   console.log("ACT: fetching enemy details by ID");
+  //   let baseUrl = "https://open.faceit.com/data/v4/players";
+
+  //   let config = {
+  //     headers: {
+  //       accept: "application/json",
+  //       Authorization: "Bearer " + process.env.VUE_APP_FACEIT_API_KEY
+  //     }
+  //   };
+
+  //   let url = baseUrl + "/" + accountId;
+
+  //   axios
+  //     .get(url, config)
+  //     .then(function(response) {
+  //       commit("UPDATE_MATCHES_PLAYER_DETAILS", response.data);
+  //     })
+  //     .catch(function(error) {
+  //       console.log(error);
+  //     });
+  // },
   fetchMatches: ({ commit, state, dispatch }, offset) => {
     console.log("ACT: fetching matches");
     let baseUrl = "https://open.faceit.com/data/v4/players";
@@ -74,7 +126,7 @@ export default {
       }
     };
 
-    let url = baseUrl + "/" + state.player.player_id + "/history";
+    let url = baseUrl + "/" + state.user.player_id + "/history";
 
     axios
       .get(url, config)
@@ -82,21 +134,9 @@ export default {
         if (response.data.items.length > 0) {
           commit("UPDATE_MATCHES", response.data.items);
           dispatch("fetchMatches", offset + 100);
+          // dispatch("fetchEnemyDetailsById");
         }
       })
-      // .then(function(response) {
-      //   if (response.data.items.length > 0) {
-      //     commit("UPDATE_MATCHES", response.data.items);
-      //     dispatch("fetchMatches", offset + 100);
-      //   } else if (response.data.items.length == 0) {
-      //     state.matches.forEach(match => {
-      //       // setTimeout(function() {
-      //       //   dispatch("fetchMatchDetails", match.matchId);
-      //       // }, 1000);
-      //       dispatch("fetchMatchDetails", match.matchId);
-      //     });
-      //   }
-      // })
       .catch(function(error) {
         console.log(error);
       });

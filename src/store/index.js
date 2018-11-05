@@ -8,7 +8,7 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    player: {},
+    user: {},
     matches: [],
     matchesId: 1,
     enemiesId: 1

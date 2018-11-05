@@ -16,16 +16,16 @@
 
     <v-toolbar-items>
 
-      <v-btn v-if="player.avatar">
+      <v-btn v-if="user.avatar">
         <v-avatar justify-center
-                  :title="player.nickname"
+                  :title="user.nickname"
                   size="40px">
-          <img :src="player.avatar"
+          <img :src="user.avatar"
                alt="avatar">
         </v-avatar>
       </v-btn>
 
-      <v-btn flat>{{ player.nickname }}</v-btn>
+      <v-btn flat>{{ user.nickname }}</v-btn>
       <v-btn to="/"
              flat>
         <v-icon>search</v-icon>
@@ -52,7 +52,7 @@ export default {
   },
   computed: {
     ...mapState({
-      player: state => state.player
+      user: state => state.user
     })
   },
   methods: {

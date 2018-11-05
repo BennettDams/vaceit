@@ -40,7 +40,7 @@ export default {
   components: { SearchInput },
   computed: {
     ...mapState({
-      player: state => state.player
+      user: state => state.user
     })
   }
 };
