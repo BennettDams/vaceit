@@ -90,6 +90,14 @@
                   </span>
                 </td>
                 <td class="text-xs-center">
+                  <span v-if="props.item.score">
+                    {{ props.item.score }}
+                  </span>
+                  <span v-else>
+                    &mdash;
+                  </span>
+                </td>
+                <td class="text-xs-center">
                   <!-- SCORE -->
                   <!-- <span v-if="props.item.matchDetails">
                     <v-chip :color="winOrLoseColor(props.item.matchDetails.teams.teamOwn.isWinner)"
@@ -250,10 +258,11 @@ export default {
       search: "",
       pagination: {
         page: 1,
-        rowsPerPage: 70,
+        rowsPerPage: 100,
         // sortBy: "date",
         descending: false
       },
+      selected: [],
       headers: [
         {
           text: "#",

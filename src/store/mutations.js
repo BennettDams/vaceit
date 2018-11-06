@@ -16,6 +16,9 @@ export default {
   UPDATE_USER: (state, user) => {
     state.user = user;
   },
+  UPDATE_MATCH_DETAILS_OFFSET: (state, offset) => {
+    state.matchDetailsOffset = offset;
+  },
   UPDATE_IS_FETCHING_BANS: (state, status) => {
     state.isFetchingBans = status;
   },
@@ -113,16 +116,19 @@ export default {
         return enemy;
       });
     });
+  },
+  UPDATE_MATCH_DETAILS: (state, payload) => {
+    console.log("MUT: update match details");
+    let matches = state.matches;
+    matches = matches.map(match => {
+      if (match.matchId == payload.matchId) {
+        match.map = payload.matchDetails.round_stats.Map;
+        match.score = payload.matchDetails.round_stats.Score;
+        match.amountRounds = payload.matchDetails.round_stats.Rounds;
+        match.amountRounds = payload.matchDetails.round_stats.Rounds;
+      }
+      return match;
+    });
+    state.matches = matches;
   }
-  // UPDATE_MATCH_DETAILS: (state, payload) => {
-  //   console.log("MUT: update match details");
-  //   let matches = state.matches;
-  //   matches = matches.map(match => {
-  //     if (match.matchId == payload.matchId) {
-  //       match.test = "test";
-  //     }
-  //     return match;
-  //   });
-  //   state.matches = matches;
-  // },
 };

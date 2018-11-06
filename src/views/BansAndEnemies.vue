@@ -65,7 +65,7 @@
 
             </v-layout>
 
-            <h1 class="display-1 my-5">BANNED ENEMIES</h1>
+            <!-- <h1 class="display-1 my-5">BANNED ENEMIES</h1>
 
             <v-layout v-if="enemiesWithBans.length > 0"
                       align-center>
@@ -105,13 +105,6 @@
                                         </v-card-title>
                                     </v-flex>
 
-                                    <!-- <v-card-actions>
-                    <v-spacer></v-spacer>
-                    <v-btn icon>
-                      <v-icon>favorite</v-icon>
-                    </v-btn>
-                  </v-card-actions> -->
-
                                 </v-card>
 
                             </v-flex>
@@ -123,7 +116,7 @@
             <v-layout v-else
                       align-center>
                 <h1 class="display-1">NO BANS</h1>
-            </v-layout>
+            </v-layout> -->
 
             <h1 class="display-1 my-5">ALL ENEMIES</h1>
 

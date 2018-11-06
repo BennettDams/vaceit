@@ -107,7 +107,8 @@ export default {
       .then(function(response) {
         if (response.data.items.length > 0) {
           commit("UPDATE_MATCHES", response.data.items);
-          dispatch("fetchMatches", offset + 100);
+          // dispatch("fetchMatches", offset + 100);
+          dispatch("fetchMatchDetails", 0);
         }
         // } else {
         //   dispatch("fetchEnemyDetailsById");
@@ -153,26 +154,37 @@ export default {
         console.log(error);
       });
   },
-  fetchMatchDetails: ({ commit }, matchId) => {
+  fetchMatchDetails: ({ commit, dispatch, state }) => {
     console.log("ACT: fetching match details");
-    let baseUrl = "https://open.faceit.com/data/v4/matches/";
+    let offset = state.matchDetailsOffset;
+    let matchesToFetch = state.matches.slice(offset, offset + 100);
+    matchesToFetch.forEach(match => {
+      dispatch("fetchMatchDetailsById", match.matchId);
+      commit("UPDATE_MATCH_DETAILS_OFFSET", offset);
+    });
+  },
+  fetchMatchDetailsById: ({ commit }, matchId) => {
+    console.log("ACT: fetching match details by id");
+    // let baseUrl = "https://open.faceit.com/data/v4/matches/";
+    let baseUrl = "https://open.faceit.com/data/v4/matches";
 
     let config = {
       headers: {
         accept: "application/json",
         Authorization: "Bearer " + process.env.VUE_APP_FACEIT_API_KEY
       },
-      retry: 4,
-      retryDelay: 2000
+      retry: 5,
+      retryDelay: 1000
     };
-    // let url = baseUrl + matchId + "/stats";
-    let url = baseUrl + matchId;
+
+    let url = baseUrl + "/" + matchId + "/stats";
+
     axios
       .get(url, config)
       .then(function(response) {
         commit("UPDATE_MATCH_DETAILS", {
-          // matchDetails: response.data.rounds[0],
-          matchDetails: response.data,
+          matchDetails: response.data.rounds[0],
+          // matchDetails: response.data,
           matchId: matchId
         });
       })

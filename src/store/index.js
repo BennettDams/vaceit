@@ -14,7 +14,8 @@ export default new Vuex.Store({
     matchesId: 1,
     bansId: 1,
     enemiesId: 1,
-    isFetchingBans: false
+    isFetchingBans: false,
+    matchDetailsOffset: 0
   },
   actions,
   mutations,

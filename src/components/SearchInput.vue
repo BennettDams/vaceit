@@ -36,7 +36,6 @@
 
 <script>
 import InfoDialog from "@/components/InfoDialog.vue";
-// import { setTimeout } from "timers";
 export default {
   name: "SearchInput",
   components: { InfoDialog },
@@ -54,7 +53,8 @@ export default {
     onInputEnter() {
       this.$store.dispatch("fetchAccountIdByName", this.searchInput);
       setTimeout(this.fetchMatches, 1000);
-      setTimeout(this.fetchBans, 1000);
+      setTimeout(this.$router.push("/matches"), 1000);
+      // setTimeout(this.fetchBans, 1000);
     },
     fetchMatches() {
       this.$store.dispatch("fetchMatches", 0);
