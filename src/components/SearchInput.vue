@@ -52,12 +52,8 @@ export default {
   methods: {
     onInputEnter() {
       this.$store.dispatch("fetchAccountIdByName", this.searchInput);
-      setTimeout(this.fetchMatches, 1000);
       setTimeout(this.$router.push("/matches"), 1000);
       // setTimeout(this.fetchBans, 1000);
-    },
-    fetchMatches() {
-      this.$store.dispatch("fetchMatches", 0);
     },
     fetchBans() {
       this.$store.dispatch("fetchBans", 0);

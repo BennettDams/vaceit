@@ -31,7 +31,7 @@ axios.interceptors.response.use(undefined, function axiosRetryInterceptor(err) {
 });
 
 export default {
-  fetchAccountIdByName: ({ commit }, nickname) => {
+  fetchAccountIdByName: ({ commit, dispatch }, nickname) => {
     console.log("ACT: fetching accountId by name");
     let baseUrl = "https://open.faceit.com/data/v4/players";
 
@@ -52,6 +52,7 @@ export default {
       .get(url, config)
       .then(function(response) {
         commit("UPDATE_USER", response.data);
+        dispatch("fetchMatches", 0);
       })
       .catch(function(error) {
         console.log(error);
