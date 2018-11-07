@@ -24,21 +24,25 @@ export default {
   },
   UPDATE_BANS: (state, bans) => {
     console.log("MUT: update bans");
-    let bansTemp = bans.map(ban => {
-      let obj = {};
-      obj.id = state.bansId++;
-      obj.banId = ban._id;
-      obj.playerId = ban.user_id;
-      obj.nickname = ban.nickname;
-      obj.type = ban.type;
-      obj.reasonType = ban.reason_type;
-      obj.reason = ban.reason;
-      obj.startsAt = ban.starts_at;
-
-      return obj;
-    });
-    state.bans.push(...bansTemp);
+    state.bans = bans;
   },
+  // UPDATE_BANS: (state, bans) => {
+  //   console.log("MUT: update bans");
+  //   let bansTemp = bans.map(ban => {
+  //     let obj = {};
+  //     obj.id = state.bansId++;
+  //     obj.banId = ban._id;
+  //     obj.playerId = ban.user_id;
+  //     obj.nickname = ban.nickname;
+  //     obj.type = ban.type;
+  //     obj.reasonType = ban.reason_type;
+  //     obj.reason = ban.reason;
+  //     obj.startsAt = ban.starts_at;
+
+  //     return obj;
+  //   });
+  //   state.bans.push(...bansTemp);
+  // },
   UPDATE_MATCHES: (state, matches) => {
     console.log("MUT: update matches");
     let matchesTemp = matches.map(match => {

@@ -97,9 +97,8 @@
                     &mdash;
                   </span>
                 </td>
-                <td class="text-xs-center">
-                  <!-- SCORE -->
-                  <!-- <span v-if="props.item.matchDetails">
+                <!-- <td class="text-xs-center">
+                  <span v-if="props.item.matchDetails">
                     <v-chip :color="winOrLoseColor(props.item.matchDetails.teams.teamOwn.isWinner)"
                             text-color="white"
                             class="my-2 px-3">
@@ -107,14 +106,15 @@
                       &ndash;
                       {{ props.item.matchDetails.teams.teamEnemy.finalScore }}
                     </v-chip>
-                  </span> -->
-                  <!-- <span v-else>
+                  </span>
+                  <span v-else>
                     &mdash;
-                  </span> -->
-                </td>
+                  </span>
+                </td> -->
                 <td class="text-xs-center">
                   <v-btn color=""
-                         :href="props.item.faceitMatchUrl">
+                         :href="props.item.faceitMatchUrl"
+                         target="_blank">
                     <v-icon color="orange darken-2">gamepad</v-icon>
                   </v-btn>
                 </td>

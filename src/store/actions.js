@@ -119,34 +119,19 @@ export default {
         console.log(error);
       });
   },
-  fetchBans: ({ commit, dispatch }, offset) => {
+  fetchBans: ({ commit, dispatch }) => {
     console.log("ACT: fetching bans");
-    let baseUrl = "https://api.faceit.com/core/v1/bans";
-
-    let config = {
-      // headers: {
-      //   accept: "application/json",
-      //   Authorization: "Bearer " + process.env.VUE_APP_FACEIT_API_KEY
-      // },
-      params: {
-        limit: 100,
-        offset: offset
-      }
-    };
+    let baseUrl =
+      "https://cors-anywhere.herokuapp.com/https://vaceit-backend.herokuapp.com/bans";
 
     let url = baseUrl;
 
     axios
-      .get(url, config)
+      .get(url)
       .then(function(response) {
         dispatch("setIsFetchingBans", true);
-        if (
-          response.data &&
-          response.data.payload &&
-          response.data.payload.length > 0
-        ) {
-          commit("UPDATE_BANS", response.data.payload);
-          dispatch("fetchBans", offset + 100);
+        if (response.data.length > 0) {
+          commit("UPDATE_BANS", response.data);
         } else {
           dispatch("setIsFetchingBans", false);
         }
@@ -155,6 +140,42 @@ export default {
         console.log(error);
       });
   },
+  // fetchBans: ({ commit, dispatch }, offset) => {
+  //   console.log("ACT: fetching bans");
+  //   let baseUrl = "https://api.faceit.com/core/v1/bans";
+
+  //   let config = {
+  //     // headers: {
+  //     //   accept: "application/json",
+  //     //   Authorization: "Bearer " + process.env.VUE_APP_FACEIT_API_KEY
+  //     // },
+  //     params: {
+  //       limit: 100,
+  //       offset: offset
+  //     }
+  //   };
+
+  //   let url = baseUrl;
+
+  //   axios
+  //     .get(url, config)
+  //     .then(function(response) {
+  //       dispatch("setIsFetchingBans", true);
+  //       if (
+  //         response.data &&
+  //         response.data.payload &&
+  //         response.data.payload.length > 0
+  //       ) {
+  //         commit("UPDATE_BANS", response.data.payload);
+  //         dispatch("fetchBans", offset + 100);
+  //       } else {
+  //         dispatch("setIsFetchingBans", false);
+  //       }
+  //     })
+  //     .catch(function(error) {
+  //       console.log(error);
+  //     });
+  // },
   fetchMatchDetails: ({ commit, dispatch, state }) => {
     console.log("ACT: fetching match details");
     let offset = state.matchDetailsOffset;

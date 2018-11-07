@@ -65,58 +65,71 @@
 
             </v-layout>
 
-            <!-- <h1 class="display-1 my-5">BANNED ENEMIES</h1>
+            <h1 class="display-1 my-5">BANNED ENEMIES</h1>
 
             <v-layout v-if="enemiesWithBans.length > 0"
-                      align-center>
-                <v-card id="card-grid">
-                    <v-container fluid
-                                 grid-list-md>
-                        <v-layout row
-                                  wrap>
-                            <v-flex xs2
-                                    v-for="enemy in enemiesWithBans"
-                                    :key="enemy.playerId"
-                                    class="mx-3 my-2">
+                      x10
+                      justify-center>
+                <v-timeline>
+                    <v-timeline-item v-for="enemy in enemiesWithBans"
+                                     xs12
+                                     :key="enemy.playerId"
+                                     color="red lighten-2"
+                                     large>
 
-                                <v-card>
-                                    <v-img :src="enemy.avatar"
-                                           aspect-ratio="1">
+                        <span slot="opposite"
+                              xs12>
 
-                                        <v-container fill-height
-                                                     fluid
-                                                     pa-2>
-                                            <v-layout fill-height>
-                                                <v-flex xs12
-                                                        align-end
-                                                        flexbox>
-                                                </v-flex>
-                                            </v-layout>
-                                        </v-container>
-                                    </v-img>
+                            <v-chip color="success"
+                                    text-color="white">
+                                <!-- <v-avatar>
+                                    <v-icon>account_circle</v-icon>
+                                </v-avatar> -->
+                                <!-- Ranee -->
+                                <h4 class="mr-4">STEAM NAME</h4>
+                                <p>{{ enemy.steamName }}</p>
+                            </v-chip>
+                            
+                            <v-chip color="accent"
+                                    text-color="white">
+                                <h4 class="mr-4">FACEIT ACCOUNT URL</h4>
+                                <v-btn color="transparent"
+                                       :href="enemy.faceitAccountUrl"
+                                       target="_blank">
+                                    <v-icon color="orange darken-2">gamepad</v-icon>
+                                </v-btn>
+                            </v-chip>
 
-                                    <v-flex xs4>
-                                        <v-card-title primary-title
-                                                      class="py-1">
-                                            <div>
-                                                <h3 class="text-truncaste mb-0">{{ enemy.nickname }}</h3>
-                                                <div>enemy</div>
-                                            </div>
-                                        </v-card-title>
-                                    </v-flex>
+                        </span>
 
-                                </v-card>
+                        <v-card class="elevation-2">
+                            <v-card-title class="headline display-1">{{ enemy.nickname }}</v-card-title>
+                            <v-card-text>
+                                <v-img :src="enemy.avatar"
+                                       aspect-ratio="1">
 
-                            </v-flex>
-                        </v-layout>
-                    </v-container>
-                </v-card>
+                                    <v-container fill-height
+                                                 fluid
+                                                 pa-2>
+                                        <v-layout fill-height>
+                                            <v-flex xs12
+                                                    align-end
+                                                    flexbox>
+                                            </v-flex>
+                                        </v-layout>
+                                    </v-container>
+                                </v-img>
+
+                            </v-card-text>
+                        </v-card>
+                    </v-timeline-item>
+                </v-timeline>
             </v-layout>
 
             <v-layout v-else
                       align-center>
                 <h1 class="display-1">NO BANS</h1>
-            </v-layout> -->
+            </v-layout>
 
             <h1 class="display-1 my-5">ALL ENEMIES</h1>
 
@@ -156,13 +169,6 @@
                                             </div>
                                         </v-card-title>
                                     </v-flex>
-
-                                    <!-- <v-card-actions>
-                    <v-spacer></v-spacer>
-                    <v-btn icon>
-                      <v-icon>favorite</v-icon>
-                    </v-btn>
-                  </v-card-actions> -->
 
                                 </v-card>
 
