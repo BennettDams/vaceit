@@ -106,6 +106,9 @@ export default {
       obj.teams.teamOwn.name = match.teams[teamOwn].nickname;
       obj.teams.teamEnemy.name = match.teams[teamEnemy].nickname;
 
+      obj.teams.teamOwn.teamId = match.teams[teamOwn].team_id;
+      obj.teams.teamEnemy.teamId = match.teams[teamEnemy].team_id;
+
       return obj;
     });
     state.matches.push(...matchesTemp);
@@ -127,9 +130,31 @@ export default {
     matches = matches.map(match => {
       if (match.matchId == payload.matchId) {
         match.map = payload.matchDetails.round_stats.Map;
+
         match.score = payload.matchDetails.round_stats.Score;
+
         match.amountRounds = payload.matchDetails.round_stats.Rounds;
-        match.amountRounds = payload.matchDetails.round_stats.Rounds;
+
+        match.region = payload.matchDetails.round_stats.Region;
+
+        match.teams.teamOwn.score = parseInt(
+          payload.matchDetails.teams.find(
+            team => team.team_id == match.teams.teamOwn.teamId
+          ).team_stats["Final Score"]
+        );
+
+        match.teams.teamEnemy.score = parseInt(
+          payload.matchDetails.teams.find(
+            team => team.team_id == match.teams.teamEnemy.teamId
+          ).team_stats["Final Score"]
+        );
+
+        match.teams.teamOwn.isWinner =
+          match.teams.teamOwn.score > match.teams.teamEnemy.score
+            ? true
+            : false;
+
+        match.teams.teamEnemy.isWinner = !match.teams.teamOwn.isWinner;
       }
       return match;
     });

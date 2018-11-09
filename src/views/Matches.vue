@@ -90,27 +90,19 @@
                   </span>
                 </td>
                 <td class="text-xs-center">
-                  <span v-if="props.item.score">
-                    {{ props.item.score }}
-                  </span>
-                  <span v-else>
-                    &mdash;
-                  </span>
-                </td>
-                <!-- <td class="text-xs-center">
-                  <span v-if="props.item.matchDetails">
-                    <v-chip :color="winOrLoseColor(props.item.matchDetails.teams.teamOwn.isWinner)"
+                  <span v-if="props.item.teams.teamOwn.score">
+                    <v-chip :color="winOrLoseColor(props.item.teams.teamOwn.isWinner)"
                             text-color="white"
                             class="my-2 px-3">
-                      {{ props.item.matchDetails.teams.teamOwn.finalScore }}
+                      {{ props.item.teams.teamOwn.score }}
                       &ndash;
-                      {{ props.item.matchDetails.teams.teamEnemy.finalScore }}
+                      {{ props.item.teams.teamEnemy.score }}
                     </v-chip>
                   </span>
                   <span v-else>
                     &mdash;
                   </span>
-                </td> -->
+                </td>
                 <td class="text-xs-center">
                   <v-btn color=""
                          :href="props.item.faceitMatchUrl"
@@ -125,9 +117,6 @@
               <v-card flat>
                 <v-card-text>
                   <v-layout row>
-                    <!-- <v-flex xs5>
-                      <p class="text-xs-center">{{ props.item.matchDetails.teams.teamOwn.name }}</p>
-                    </v-flex> -->
 
                     <v-flex xs5
                             align-center>
@@ -170,13 +159,13 @@
                             layout
                             align-center
                             justify-center>
-                      <!-- <span :class="['display-2', 'text-xs-center', winOrLoseColor(props.item.matchDetails.teams.teamOwn.isWinner) + '--text']">
-                        {{ props.item.matchDetails.teams.teamOwn.finalScore }}
+                      <span :class="['display-3', 'text-xs-center', winOrLoseColor(props.item.teams.teamOwn.isWinner) + '--text']">
+                        {{ props.item.teams.teamOwn.score }}
                       </span>
-                      <span class="display-2 mx-4">&#58;</span>
-                      <span :class="['display-2', 'text-xs-center', winOrLoseColor(props.item.matchDetails.teams.teamEnemy.isWinner) + '--text']">
-                        {{ props.item.matchDetails.teams.teamEnemy.finalScore }}
-                      </span> -->
+                      <span class="display-3 mx-4">&#58;</span>
+                      <span :class="['display-3', 'text-xs-center', winOrLoseColor(props.item.teams.teamEnemy.isWinner) + '--text']">
+                        {{ props.item.teams.teamEnemy.score }}
+                      </span>
                     </v-flex>
 
                     <v-flex xs5
@@ -317,13 +306,6 @@ export default {
       user: state => state.user,
       matches: state => state.matches
     }),
-    // isLoading() {
-    //   let loading = true;
-    //   loading = this.matches.every(e => {
-    //     !e["matchDetails"]["score"];
-    //   });
-    //   return loading;
-    // },
     faceitLevelColor() {
       let color;
       let level = this.user.games.csgo.skill_level;
