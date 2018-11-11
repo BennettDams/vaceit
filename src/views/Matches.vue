@@ -245,13 +245,8 @@ export default {
       baseUrl: "https://open.faceit.com/data/v4/players",
       key: process.env.VUE_APP_FACEIT_API_KEY,
       search: "",
-      pagination: {
-        page: 1,
-        rowsPerPage: 100,
-        // sortBy: "date",
-        descending: false
-      },
       selected: [],
+      paginationObject: {},
       headers: [
         {
           text: "#",
@@ -306,6 +301,20 @@ export default {
       user: state => state.user,
       matches: state => state.matches
     }),
+    pagination: {
+      get: function() {
+        let result = this.paginationObject;
+        result.rowsPerPage = 100;
+        result.totalItems = this.matches.length;
+        return result;
+      },
+      set: function(newValue) {
+        this.paginationObject = newValue;
+      }
+    },
+    matchesLength() {
+      return this.matches.length;
+    },
     faceitLevelColor() {
       let color;
       let level = this.user.games.csgo.skill_level;

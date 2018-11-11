@@ -108,12 +108,10 @@ export default {
       .then(function(response) {
         if (response.data.items.length > 0) {
           commit("UPDATE_MATCHES", response.data.items);
-          // dispatch("fetchMatches", offset + 100);
-          dispatch("fetchMatchDetails", 0);
+          dispatch("fetchMatches", offset + 100);
+        } else {
+          dispatch("fetchMatchDetails");
         }
-        // } else {
-        //   dispatch("fetchEnemyDetailsById");
-        // }
       })
       .catch(function(error) {
         console.log(error);
@@ -140,42 +138,6 @@ export default {
         console.log(error);
       });
   },
-  // fetchBans: ({ commit, dispatch }, offset) => {
-  //   console.log("ACT: fetching bans");
-  //   let baseUrl = "https://api.faceit.com/core/v1/bans";
-
-  //   let config = {
-  //     // headers: {
-  //     //   accept: "application/json",
-  //     //   Authorization: "Bearer " + process.env.VUE_APP_FACEIT_API_KEY
-  //     // },
-  //     params: {
-  //       limit: 100,
-  //       offset: offset
-  //     }
-  //   };
-
-  //   let url = baseUrl;
-
-  //   axios
-  //     .get(url, config)
-  //     .then(function(response) {
-  //       dispatch("setIsFetchingBans", true);
-  //       if (
-  //         response.data &&
-  //         response.data.payload &&
-  //         response.data.payload.length > 0
-  //       ) {
-  //         commit("UPDATE_BANS", response.data.payload);
-  //         dispatch("fetchBans", offset + 100);
-  //       } else {
-  //         dispatch("setIsFetchingBans", false);
-  //       }
-  //     })
-  //     .catch(function(error) {
-  //       console.log(error);
-  //     });
-  // },
   fetchMatchDetails: ({ commit, dispatch, state }) => {
     console.log("ACT: fetching match details");
     let offset = state.matchDetailsOffset;
@@ -206,7 +168,6 @@ export default {
       .then(function(response) {
         commit("UPDATE_MATCH_DETAILS", {
           matchDetails: response.data.rounds[0],
-          // matchDetails: response.data,
           matchId: matchId
         });
       })
